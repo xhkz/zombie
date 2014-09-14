@@ -31,18 +31,17 @@ void initMatrix(Entity ** matrix, int size_x, int size_y)
     for (i = 1; i <= size_y; i++)
     {
         for (j = 1; j <= size_x; j++)
-        {  if (choose > 5)
+        {  if (choose >2)
            {
             imatrix[i][j].type = HUMAN;
             matrix[i][j].moveChance = MOVE_HUMAN;
            }
-           else if (choose <2)
+           else 
            {
             imatrix[i][j].type = ZOMBIE;
             matrix[i][j].moveChance = MOVE_ZOMBIE;
             }
-            else
-                {imatrix[i][j].type = EMPTY;}
+          
             
         }
     }
