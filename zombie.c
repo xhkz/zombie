@@ -78,23 +78,23 @@ int main(int argc, char **argv)
 
                     if (move < 1.0*moveChance && matrix_a[i-1][j].type == EMPTY && matrix_b[i-1][j].type == EMPTY)
                     {
-                        matrix_b[i-1][j].type = HUMAN;
+                        matrix_b[i-1][j].type = matrix_a[i][j].type;
                     }
                     else if (move < 2.0*moveChance && matrix_a[i+1][j].type == EMPTY && matrix_b[i+1][j].type == EMPTY)
                     {
-                        matrix_b[i+1][j].type = HUMAN;
+                        matrix_b[i+1][j].type = matrix_a[i][j].type;
                     }
                     else if (move < 3.0*moveChance && matrix_a[i][j-1].type == EMPTY && matrix_b[i][j-1].type == EMPTY)
                     {
-                        matrix_b[i][j-1].type = HUMAN;
+                        matrix_b[i][j-1].type = matrix_a[i][j].type;
                     }
                     else if (move < 4.0*moveChance && matrix_a[i][j+1].type == EMPTY && matrix_b[i][j+1].type == EMPTY)
                     {
-                        matrix_b[i][j+1].type = HUMAN;
+                        matrix_b[i][j+1].type = matrix_a[i][j].type;
                     }
                     else
                     {
-                        matrix_b[i][j].type = HUMAN;
+                        matrix_b[i][j].type = matrix_a[i][j].type;
                     }
                 }
             }
