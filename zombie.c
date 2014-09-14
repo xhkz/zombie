@@ -80,7 +80,8 @@ int main(int argc, char **argv)
                     {
                         if (i > 1){
                             matrix_b[i-1][j].type = matrix_a[i][j].type;
-                        }else{  // move point out of boundary back to matrix
+                        }else if(i == 1 && matrix_b[SIZEX][j].type == EMPTY){  
+                            // move point out of boundary back to matrix
                             matrix_b[SIZEX][j].type = matrix_a[i][j].type;
                         }
                     }
@@ -88,7 +89,8 @@ int main(int argc, char **argv)
                     {
                         if (i < SIZEX){
                             matrix_b[i+1][j].type = matrix_a[i][j].type;
-                        }else{  // move point out of boundary back to matrix
+                        }else if(i == SIZEX && matrix_b[0][j].type == EMPTY){  
+                            // move point out of boundary back to matrix
                             matrix_b[0][j].type = matrix_a[i][j].type;
                         }
                     }
@@ -96,7 +98,8 @@ int main(int argc, char **argv)
                     {
                         if (j > 1){
                             matrix_b[i][j-1].type = matrix_a[i][j].type;
-                        }else{  // move point out of boundary back to matrix
+                        }else if(j == 1 && matrix_b[i][SIZEY].type == EMPTY)  
+                            // move point out of boundary back to matrix
                             matrix_b[i][SIZEY].type = matrix_a[i][j].type;
                         }
                     }
@@ -104,7 +107,8 @@ int main(int argc, char **argv)
                     {
                         if (j < SIZEY){
                             matrix_b[i][j+1].type = matrix_a[i][j].type;
-                        }else{  // move point out of boundary back to matrix
+                        }else if(j == SIZEY && matrix_b[i][0].type == EMPTY){  
+                            // move point out of boundary back to matrix
                             matrix_b[i][0].type = matrix_a[i][j].type;
                         }
                     }
