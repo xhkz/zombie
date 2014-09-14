@@ -34,6 +34,7 @@ void initMatrix(Entity ** matrix, int size_x, int size_y)
     {
         for (j = 1; j <= size_x; j++)
 <<<<<<< HEAD
+<<<<<<< HEAD
         {
             if(drand48() <= 0.10){
                 matrix[i][j].type = ZOMBIE;
@@ -43,6 +44,8 @@ void initMatrix(Entity ** matrix, int size_x, int size_y)
                 matrix[i][j].moveChance = MOVE_HUMAN;
             }
 =======
+=======
+>>>>>>> FETCH_HEAD
         {  if (choose >2)
            {
             imatrix[i][j].type = HUMAN;
@@ -54,6 +57,9 @@ void initMatrix(Entity ** matrix, int size_x, int size_y)
             matrix[i][j].moveChance = MOVE_ZOMBIE;
             }
           
+<<<<<<< HEAD
+>>>>>>> FETCH_HEAD
+=======
 >>>>>>> FETCH_HEAD
             
         }
