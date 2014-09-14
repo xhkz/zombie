@@ -78,19 +78,35 @@ int main(int argc, char **argv)
 
                     if (move < 1.0*moveChance && matrix_a[i-1][j].type == EMPTY && matrix_b[i-1][j].type == EMPTY)
                     {
-                        matrix_b[i-1][j].type = matrix_a[i][j].type;
+                        if (i > 1){
+                            matrix_b[i-1][j].type = matrix_a[i][j].type;
+                        }else{  // move point out of boundary back to matrix
+                            matrix_b[SIZEX][j].type = matrix_a[i][j].type;
+                        }
                     }
                     else if (move < 2.0*moveChance && matrix_a[i+1][j].type == EMPTY && matrix_b[i+1][j].type == EMPTY)
                     {
-                        matrix_b[i+1][j].type = matrix_a[i][j].type;
+                        if (i < SIZEX){
+                            matrix_b[i+1][j].type = matrix_a[i][j].type;
+                        }else{  // move point out of boundary back to matrix
+                            matrix_b[0][j].type = matrix_a[i][j].type;
+                        }
                     }
                     else if (move < 3.0*moveChance && matrix_a[i][j-1].type == EMPTY && matrix_b[i][j-1].type == EMPTY)
                     {
-                        matrix_b[i][j-1].type = matrix_a[i][j].type;
+                        if (j > 1){
+                            matrix_b[i][j-1].type = matrix_a[i][j].type;
+                        }else{  // move point out of boundary back to matrix
+                            matrix_b[i][SIZEY].type = matrix_a[i][j].type;
+                        }
                     }
                     else if (move < 4.0*moveChance && matrix_a[i][j+1].type == EMPTY && matrix_b[i][j+1].type == EMPTY)
                     {
-                        matrix_b[i][j+1].type = matrix_a[i][j].type;
+                        if (j < SIZEY){
+                            matrix_b[i][j+1].type = matrix_a[i][j].type;
+                        }else{  // move point out of boundary back to matrix
+                            matrix_b[i][0].type = matrix_a[i][j].type;
+                        }
                     }
                     else
                     {
@@ -104,8 +120,6 @@ int main(int argc, char **argv)
             unlock(i, locks);
             #endif
         }
-
-        // move point out of boundary back to matrix
 
         Entity **matrix_t = matrix_a;
         matrix_a = matrix_b;
