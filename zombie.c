@@ -68,63 +68,15 @@ int main(int argc, char **argv)
             #endif
             for (int j = 1; j <= SIZEY; j++)
             {
-                Entity *p = &matrix_a[i][j];
-
-                if (p->type != EMPTY)
-                {
-                    p->type = EMPTY;
-                    double move = drand48();
-                    double moveChance = p->moveChance;
-
-                    if (move < 1.0*moveChance && matrix_a[i-1][j].type == EMPTY && matrix_b[i-1][j].type == EMPTY)
-                    {
-                        if (i > 1){
-                            matrix_b[i-1][j].type = matrix_a[i][j].type;
-                        }else if(i == 1 && matrix_b[SIZEX][j].type == EMPTY){  
-                            // move point out of boundary back to matrix
-                            matrix_b[SIZEX][j].type = matrix_a[i][j].type;
-                        }
-                    }
-                    else if (move < 2.0*moveChance && matrix_a[i+1][j].type == EMPTY && matrix_b[i+1][j].type == EMPTY)
-                    {
-                        if (i < SIZEX){
-                            matrix_b[i+1][j].type = matrix_a[i][j].type;
-                        }else if(i == SIZEX && matrix_b[0][j].type == EMPTY){  
-                            // move point out of boundary back to matrix
-                            matrix_b[0][j].type = matrix_a[i][j].type;
-                        }
-                    }
-                    else if (move < 3.0*moveChance && matrix_a[i][j-1].type == EMPTY && matrix_b[i][j-1].type == EMPTY)
-                    {
-                        if (j > 1){
-                            matrix_b[i][j-1].type = matrix_a[i][j].type;
-                        }else if(j == 1 && matrix_b[i][SIZEY].type == EMPTY)  
-                            // move point out of boundary back to matrix
-                            matrix_b[i][SIZEY].type = matrix_a[i][j].type;
-                        }
-                    }
-                    else if (move < 4.0*moveChance && matrix_a[i][j+1].type == EMPTY && matrix_b[i][j+1].type == EMPTY)
-                    {
-                        if (j < SIZEY){
-                            matrix_b[i][j+1].type = matrix_a[i][j].type;
-                        }else if(j == SIZEY && matrix_b[i][0].type == EMPTY){  
-                            // move point out of boundary back to matrix
-                            matrix_b[i][0].type = matrix_a[i][j].type;
-                        }
-                    }
-                    else
-                    {
-                        matrix_b[i][j].type = matrix_a[i][j].type;
-                    }
-                }
+                moveEntity(matrix_a, matrix_b, i, j);
             }
-
-            // MOVE BACK
             #ifdef _OPENMP
             unlock(i, locks);
             #endif
         }
+        moveBackBorder(matrix_b);
 
+        //swap matrix
         Entity **matrix_t = matrix_a;
         matrix_a = matrix_b;
         matrix_b = matrix_t;

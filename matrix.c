@@ -7,12 +7,10 @@ Entity **createMatrix(int size_x, int size_y)
 {
     Entity **matrix = (Entity **) malloc(size_y * sizeof(Entity));
 
-    int i, j;
-
-    for (i = 0; i < size_y; i++)
+    for (int i = 0; i < size_y; i++)
     {
         matrix[i] = (Entity *) malloc(size_x * sizeof(Entity));
-        for (j = 0; j < size_x; j++)
+        for (int j = 0; j < size_x; j++)
         {
             Entity entity;
             entity.type = EMPTY;
@@ -27,20 +25,23 @@ void initMatrix(Entity ** matrix, int size_x, int size_y)
 {
     srand48(8767134);
 
-    int i, j;
-
-    for (i = 1; i <= size_y; i++)
+    for (int i = 1; i <= size_y; i++)
     {
-        for (j = 1; j <= size_x; j++)
+        for (int j = 1; j <= size_x; j++)
         {
-            if(drand48() <= 0.10){
+            double chance = drand48();
+            if (chance <= INIT_CHANCE_ZOMBIE)
+            {
                 matrix[i][j].type = ZOMBIE;
                 matrix[i][j].moveChance = MOVE_ZOMBIE;
-            }else{
+            }
+            else if (chance <= INIT_CHANCE_HUMAN)
+            {
                 matrix[i][j].type = HUMAN;
                 matrix[i][j].moveChance = MOVE_HUMAN;
             }
-
+            else
+                matrix[i][j].type = EMPTY;
         }
     }
 }

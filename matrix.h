@@ -9,6 +9,4 @@ void initMatrix(Entity **matrix, int size_x, int size_y);
 
 void clearMatrix(Entity **matrix);
 
-int rand(void);
-
 #endif // MATRIX_H_INCLUDED

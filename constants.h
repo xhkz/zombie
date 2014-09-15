@@ -2,11 +2,13 @@
 #define CONSTANTS_H_INCLUDED
 
 #define STEPS   10
-
 #define SIZEX   10
 #define SIZEY   10
 
 #define MAX_AGE 150
+
+#define INIT_CHANCE_HUMAN   0.6
+#define INIT_CHANCE_ZOMBIE  0.1
 
 // move chance per day each direction
 #define MOVE_HUMAN   0.1

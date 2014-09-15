@@ -10,7 +10,7 @@ typedef enum {
 } EntityType;
 
 typedef enum {
-    HEALTHY, INFECTED,
+    HEALTHY, INFECTED, NONE
 } Status;
 
 typedef struct {
@@ -20,5 +20,10 @@ typedef struct {
     double moveChance;
     Status status;
 } Entity;
+
+void moveEntity(Entity **matrix_a, Entity **matrix_b, int i, int j);
+void moveBackBorder(Entity **matrix);
+void clearEntity(Entity * p);
+void copyEntity(Entity * source, Entity * target);
 
 #endif // ENTITY_H_INCLUDED
