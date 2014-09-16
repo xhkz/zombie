@@ -6,6 +6,10 @@ typedef enum {
 } Gender;
 
 typedef enum {
+    YOUNG, ADULT, ELDER
+} Stage;
+
+typedef enum {
     HUMAN, ZOMBIE, EMPTY
 } EntityType;
 
@@ -15,7 +19,7 @@ typedef enum {
 
 typedef struct {
     EntityType type;
-    int age;
+    Stage stage;
     unsigned long long int steps;
     double moveChance;
     Status status;
