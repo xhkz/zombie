@@ -1,8 +1,16 @@
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "entity.h"
+#include "constants.h"
 
-void moveEntity(Entity **matrix_a, Entity **matrix_b, int i, int j)
+bool randomDeath(Entity * p, double val)
+{
+    return (p->type == HUMAN && val < DEATH_RATE_HUMAN) ||
+           (p->type == ZOMBIE && val < DEATH_RATE_ZOMBIE);
+}
+
+void process(Entity **matrix_a, Entity **matrix_b, int i, int j)
 {
     Entity *cell_a = &matrix_a[i][j];
 
@@ -32,30 +40,51 @@ void moveEntity(Entity **matrix_a, Entity **matrix_b, int i, int j)
             cell_b = &matrix_b[i][j];
         }
 
-        copyEntity(cell_a, cell_b);
+        if (!randomDeath(cell_a, move)) copyEntity(cell_a, cell_b);
         clearEntity(cell_a);
     }
 }
 
 void moveBackBorder(Entity **matrix)
 {
+    for (int i = 1; i <= SIZEX; i++)
+    {
+        moveEntity(&matrix[i][0], &matrix[i][1]);
+        moveEntity(&matrix[i][SIZEY+1], &matrix[i][SIZEY]);
+    }
 
+    for (int i = 1; i <= SIZEY; i++)
+    {
+        moveEntity(&matrix[0][i], &matrix[1][i]);
+        moveEntity(&matrix[SIZEX+1][i], &matrix[SIZEX][i]);
+    }
+}
+
+void moveEntity(Entity * src, Entity * dest)
+{
+    if (src->type != EMPTY && dest->type == EMPTY)
+    {
+        copyEntity(src, dest);
+        clearEntity(src);
+    }
 }
 
 void clearEntity(Entity * p)
 {
     p->type = EMPTY;
-    p->age = 0;
+    p->gender = INV;
+    p->stage = NIL;
     p->steps = 0;
     p->moveChance = 0.0;
     p->status = NONE;
 }
 
-void copyEntity(Entity * source, Entity * target)
+void copyEntity(Entity * src, Entity * dest)
 {
-    target->type = source->type;
-    target->age = source->age;
-    target->steps = source->steps;
-    target->moveChance = source->moveChance;
-    target->status = source->status;
+    dest->type = src->type;
+    dest->gender = src->gender;
+    dest->stage = src->stage;
+    dest->moveChance = src->moveChance;
+    dest->status = src->status;
+    dest->steps = src->steps;
 }

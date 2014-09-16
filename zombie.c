@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -43,7 +44,9 @@ void unlock(int i, bool *locks)
 
 int main(int argc, char **argv)
 {
-    srand48(8767134);
+    srandom(time(NULL));
+	srand48(time(NULL));
+
     bool *locks = (bool *)malloc((SIZEX + 2) * sizeof(bool));
 
     for (int i = 0; i < SIZEX + 2; i++)
@@ -59,7 +62,7 @@ int main(int argc, char **argv)
     for (int n = 0; n < STEPS; n++)
     {
         #ifdef _OPENMP
-        #pragma omp parallel for default(none) shared(matrix_a,matrix_b,n,locks)
+        #pragma omp parallel for default(none) shared(matrix_a, matrix_b, n, locks)
         #endif
         for (int i = 1; i <= SIZEX; i++)
         {
@@ -68,7 +71,7 @@ int main(int argc, char **argv)
             #endif
             for (int j = 1; j <= SIZEY; j++)
             {
-                moveEntity(matrix_a, matrix_b, i, j);
+                process(matrix_a, matrix_b, i, j);
             }
             #ifdef _OPENMP
             unlock(i, locks);
@@ -82,7 +85,7 @@ int main(int argc, char **argv)
         matrix_b = matrix_t;
 
         print_population(matrix_a, n+1);
-        print_matrix(matrix_a, n+1);
+        //print_matrix(matrix_a, n+1);
     }
 
     return 0;

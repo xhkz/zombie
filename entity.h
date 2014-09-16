@@ -1,12 +1,14 @@
 #ifndef ENTITY_H_INCLUDED
 #define ENTITY_H_INCLUDED
 
+#include <stdbool.h>
+
 typedef enum {
-    MALE, FEMALE
+    MALE, FEMALE, INV
 } Gender;
 
 typedef enum {
-    YOUNG, ADULT, ELDER
+    YOUNG, ADULT, ELDER, NIL
 } Stage;
 
 typedef enum {
@@ -19,14 +21,17 @@ typedef enum {
 
 typedef struct {
     EntityType type;
+    Gender gender;
     Stage stage;
-    unsigned long long int steps;
     double moveChance;
     Status status;
+    unsigned long long int steps;
 } Entity;
 
-void moveEntity(Entity **matrix_a, Entity **matrix_b, int i, int j);
+bool randomDeath(Entity * p, double val);
+void process(Entity **matrix_a, Entity **matrix_b, int i, int j);
 void moveBackBorder(Entity **matrix);
+void moveEntity(Entity * src, Entity * dest);
 void clearEntity(Entity * p);
 void copyEntity(Entity * source, Entity * target);
 

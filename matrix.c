@@ -12,8 +12,7 @@ Entity **createMatrix(int size_x, int size_y)
         matrix[i] = (Entity *) malloc(size_x * sizeof(Entity));
         for (int j = 0; j < size_x; j++)
         {
-            Entity entity;
-            entity.type = EMPTY;
+            Entity entity = {EMPTY, INV, NIL, 0.0, NONE, 0};
             matrix[i][j] = entity;
         }
     }
@@ -21,27 +20,71 @@ Entity **createMatrix(int size_x, int size_y)
     return matrix;
 }
 
+
+int randomPos(int limit)
+{
+    return 1 + (rand() % limit);
+}
+
 void initMatrix(Entity ** matrix, int size_x, int size_y)
 {
-    srand48(8767134);
+    int humanCount = 0,
+        zombieCount = 0,
+        posX = 0,
+        posY = 0;
 
-    for (int i = 1; i <= size_y; i++)
+    double randomRate;
+    Entity * p = NULL;
+
+    while (humanCount < INIT_HUMAN_NUM)
     {
-        for (int j = 1; j <= size_x; j++)
+        posX = randomPos(SIZEX);
+        posY = randomPos(SIZEY);
+        p = &matrix[posX][posY];
+
+        if (p->type == EMPTY)
         {
-            double chance = drand48();
-            if (chance <= INIT_CHANCE_ZOMBIE)
+            p->type = HUMAN;
+            randomRate = drand48();
+            p->gender = randomRate > INIT_GENDER_RATE ? MALE : FEMALE;
+            if (randomRate < INIT_YOUNG_RATE)
             {
-                matrix[i][j].type = ZOMBIE;
-                matrix[i][j].moveChance = MOVE_ZOMBIE;
+                p->stage = YOUNG;
+                p->moveChance = MOVE_HUMAN_YOUNG;
             }
-            else if (chance <= INIT_CHANCE_HUMAN)
+            else if (randomRate < INIT_ADULT_RATE)
             {
-                matrix[i][j].type = HUMAN;
-                matrix[i][j].moveChance = MOVE_HUMAN;
+                p->stage = ADULT;
+                p->moveChance = MOVE_HUMAN_ADULT;
             }
             else
-                matrix[i][j].type = EMPTY;
+            {
+                p->stage = ELDER;
+                p->moveChance = MOVE_HUMAN_ELDER;
+            }
+
+            p->status = HEALTHY;
+
+            humanCount++;
+        }
+    }
+
+    while (zombieCount < INIT_ZOMBIE_NUM)
+    {
+        posX = randomPos(SIZEX);
+        posY = randomPos(SIZEY);
+        p = &matrix[posX][posY];
+
+        if (p->type == EMPTY)
+        {
+            p->type = ZOMBIE;
+            randomRate = drand48();
+            p->gender = INV;
+            p->stage = NIL;
+            p->moveChance = MOVE_ZOMBIE;
+            p->status = NONE;
+
+            zombieCount++;
         }
     }
 }
