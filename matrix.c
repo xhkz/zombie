@@ -47,7 +47,13 @@ void initMatrix(Entity ** matrix, int size_x, int size_y)
             p->type = HUMAN;
             randomRate = drand48();
             p->gender = randomRate > INIT_GENDER_RATE ? MALE : FEMALE;
-            if (randomRate < INIT_YOUNG_RATE)
+            
+            if(randomRate < INIT_BABY_RATE)
+            {
+                p->stage = BABY;
+                p->moveChance = MOVE_HUMAN_BABY;
+            }
+            else if (randomRate < INIT_YOUNG_RATE)
             {
                 p->stage = YOUNG;
                 p->moveChance = MOVE_HUMAN_YOUNG;

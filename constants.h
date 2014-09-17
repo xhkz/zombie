@@ -13,10 +13,12 @@
 #define INIT_GENDER_RATE    0.5
 
 // age: young(0-0.2) adult(0.2-0.8) elderly(0.8-1)
+#define INIT_BABY_RATE      0.05 
 #define INIT_YOUNG_RATE     0.2
 #define INIT_ADULT_RATE     0.8
 
 // move chance per day each direction
+#define MOVE_HUMAN_BABY     0.025
 #define MOVE_HUMAN_YOUNG    0.125
 #define MOVE_HUMAN_ADULT    0.1
 #define MOVE_HUMAN_ELDER    0.05

@@ -8,7 +8,7 @@ typedef enum {
 } Gender;
 
 typedef enum {
-    YOUNG, ADULT, ELDER, NIL
+    BABY,YOUNG, ADULT, ELDER, NIL
 } Stage;
 
 typedef enum {
