@@ -3,7 +3,6 @@
 #include <stdbool.h>
 #include <time.h>
 
-#ifdef _OPENMP
 #include <omp.h>
 #endif
 
@@ -12,7 +11,7 @@
 #include "utils.h"
 #include "matrix.h"
 
-#ifdef _OPENMP
+#if defined(_OPENMP) 
 void lock(int i, bool *locks)
 {
     for (bool locked = false; locked == false; /*NOP*/)
