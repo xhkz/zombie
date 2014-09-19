@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "entity.h"
@@ -12,7 +13,7 @@ Entity **createMatrix(int size_x, int size_y)
         matrix[i] = (Entity *) malloc(size_x * sizeof(Entity));
         for (int j = 0; j < size_x; j++)
         {
-            Entity entity = {EMPTY, INV, NIL, 0.0, NONE, 0};
+            Entity entity = {EMPTY, INV, 0, NIL, 0.0, NONE, 0};
             matrix[i][j] = entity;
         }
     }
@@ -42,7 +43,7 @@ void initMatrix(Entity ** matrix, int size_x, int size_y)
 
         if (p->type == EMPTY)
         {
-            createHuman(p, drand48());
+            createHuman(p, drand48(), NIL);
             humanCount++;
         }
     }
@@ -65,6 +66,8 @@ void process(Entity **matrix_a, Entity **matrix_b, int i, int j)
 {
     Entity * cell_a = &matrix_a[i][j];
     Entity * cell_b = NULL;
+
+    growup(cell_a);
 
     if (cell_a->type != EMPTY)
     {
@@ -94,7 +97,7 @@ void process(Entity **matrix_a, Entity **matrix_b, int i, int j)
             cell_b = &matrix_b[i][j];
         }
 
-        if (!randomDeath(cell_a, move))
+        if (!randomDeath(cell_a, drand48()))
         {
             cell_a->steps++;
             copyEntity(cell_a, cell_b);

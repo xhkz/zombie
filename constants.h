@@ -1,18 +1,24 @@
 #ifndef CONSTANTS_H_INCLUDED
 #define CONSTANTS_H_INCLUDED
 
-#define STEPS   3650
+#define STEPS   365
 #define SIZEX   500
 #define SIZEY   500
+
+#define YEAR    365
 
 #define INIT_HUMAN_NUM      0.17*SIZEX*SIZEY
 #define INIT_ZOMBIE_NUM     2
 #define INIT_CHANCE_HUMAN   INIT_HUMAN_NUM/(SIZEX*SIZEY)
 #define INIT_CHANCE_ZOMBIE  INIT_ZOMBIE_NUM/(SIZEX*SIZEY)
-
 #define INIT_GENDER_RATE    0.5
 
-// age: bady(0-0.05) young(0.05-0.2) adult(0.2-0.8) elderly(0.8-1)
+#define AGE_BABY_MAX        6
+#define AGE_YOUNG_MAX       18
+#define AGE_ADULT_MAX       60
+#define AGE_ELDER_MAX       120
+
+// stage: bady(0-0.05) young(0.05-0.2) adult(0.2-0.8) elderly(0.8-1)
 #define INIT_BABY_RATE      0.05
 #define INIT_YOUNG_RATE     0.2
 #define INIT_ADULT_RATE     0.8
@@ -27,7 +33,7 @@
 #define BIRTH_RATE_HUMAN    0.0138
 #define BIRTH_RATE_PAIR     BIRTH_RATE_HUMAN*2*2/0.6 // 2 children per adult pair
 #define DEATH_RATE_HUMAN    0.00756
-#define DEATH_RATE_ZOMBIE   0.02
+#define DEATH_RATE_ZOMBIE   0.01
 
 #define INFECTION_RATE      0.05
 
