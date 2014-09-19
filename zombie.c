@@ -3,7 +3,8 @@
 #include <stdbool.h>
 #include <time.h>
 
-#ifdef _OPENMP#include <omp.h>
+#ifdef _OPENMP
+#include <omp.h>
 #endif
 
 #include "constants.h"
@@ -60,23 +61,23 @@ int main(int argc, char **argv)
 
     for (int n = 0; n < STEPS; n++)
     {
-        #ifdef _OPENMP
+#ifdef _OPENMP
         #pragma omp parallel for default(none) shared(matrix_a, matrix_b, n, locks)
-        #endif
+#endif
         for (int i = 1; i <= SIZEX; i++)
         {
-            #ifdef _OPENMP
+#ifdef _OPENMP
             lock(i, locks);
-            #endif
+#endif
             for (int j = 1; j <= SIZEY; j++)
             {
                 process(matrix_a, matrix_b, i, j);
             }
-            #ifdef _OPENMP
+#ifdef _OPENMP
             unlock(i, locks);
-            #endif
+#endif
         }
-        moveBackBorder(matrix_b);
+        moveBackInBorder(matrix_b);
 
         //swap matrix
         Entity **matrix_t = matrix_a;

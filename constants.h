@@ -12,7 +12,7 @@
 
 #define INIT_GENDER_RATE    0.5
 
-// age: young(0-0.2) adult(0.2-0.8) elderly(0.8-1)
+// age: bady(0-0.05) young(0.05-0.2) adult(0.2-0.8) elderly(0.8-1)
 #define INIT_BABY_RATE      0.05
 #define INIT_YOUNG_RATE     0.2
 #define INIT_ADULT_RATE     0.8
@@ -25,7 +25,7 @@
 #define MOVE_ZOMBIE         0.2
 
 #define BIRTH_RATE_HUMAN    0.0138
-#define BIRTH_RATE_PAIR     BIRTH_RATE_HUMAN*2/0.6 // per adult pair
+#define BIRTH_RATE_PAIR     BIRTH_RATE_HUMAN*2*2/0.6 // 2 children per adult pair
 #define DEATH_RATE_HUMAN    0.00756
 #define DEATH_RATE_ZOMBIE   0.02
 
