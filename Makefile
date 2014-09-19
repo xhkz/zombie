@@ -4,7 +4,7 @@ CC = gcc
 CFLAGS = --std=gnu99 -g -Wall
 LIBS = -lgomp
 
-all: zombie
+all: clean zombie
 
 zombie: $(OBJS)
 	$(CC) $(CFLAGS) -o zombie $(OBJS) $(LIBS)

@@ -28,11 +28,16 @@ typedef struct {
     unsigned long long int steps;
 } Entity;
 
-bool randomDeath(Entity * p, double val);
+
 void process(Entity **matrix_a, Entity **matrix_b, int i, int j);
+bool randomDeath(Entity * p, double val);
+void randomBirth(Entity * p, Entity **matrix_a, Entity **matrix_b, int i, int j);
+bool pairBirth(Entity * p, Entity * neighbor, Entity * child);
 void moveBackBorder(Entity **matrix);
 void moveEntity(Entity * src, Entity * dest);
 void clearEntity(Entity * p);
 void copyEntity(Entity * source, Entity * target);
+void createHuman(Entity * entity, double rnd);
+void createZombie(Entity * entity);
 
 #endif // ENTITY_H_INCLUDED

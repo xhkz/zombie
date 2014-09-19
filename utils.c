@@ -8,6 +8,9 @@ void print_population(Entity **matrix, int step)
 {
     int total_male = 0,
         total_female = 0,
+        total_young = 0,
+        total_adult = 0,
+        total_elder = 0,
         total_zombie = 0,
         total_empty = 0;
 
@@ -20,6 +23,9 @@ void print_population(Entity **matrix, int step)
             case HUMAN:
                 if (matrix[i][j].gender == MALE) total_male++;
                 if (matrix[i][j].gender == FEMALE) total_female++;
+                if (matrix[i][j].stage == YOUNG) total_young++;
+                if (matrix[i][j].stage == ADULT) total_adult++;
+                if (matrix[i][j].stage == ELDER) total_elder++;
                 break;
             case ZOMBIE:
                 total_zombie++;
@@ -30,7 +36,8 @@ void print_population(Entity **matrix, int step)
         }
     }
 
-    printf("step:%d\tmale:%d\tfemale:%d\tzombie:%d\tempty:%d\n", step, total_male, total_female, total_zombie, total_empty);
+    printf("%d,male:%d,female:%d,young:%d,adult:%d,elder:%d,zombie:%d,empty:%d\n",
+           step, total_male, total_female, total_young, total_adult, total_elder, total_zombie, total_empty);
 }
 
 void print_matrix(Entity **matrix, int t)

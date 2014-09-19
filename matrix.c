@@ -20,7 +20,6 @@ Entity **createMatrix(int size_x, int size_y)
     return matrix;
 }
 
-
 int randomPos(int limit)
 {
     return 1 + (rand() % limit);
@@ -33,7 +32,6 @@ void initMatrix(Entity ** matrix, int size_x, int size_y)
         posX = 0,
         posY = 0;
 
-    double randomRate;
     Entity * p = NULL;
 
     while (humanCount < INIT_HUMAN_NUM)
@@ -44,27 +42,7 @@ void initMatrix(Entity ** matrix, int size_x, int size_y)
 
         if (p->type == EMPTY)
         {
-            p->type = HUMAN;
-            randomRate = drand48();
-            p->gender = randomRate > INIT_GENDER_RATE ? MALE : FEMALE;
-            if (randomRate < INIT_YOUNG_RATE)
-            {
-                p->stage = YOUNG;
-                p->moveChance = MOVE_HUMAN_YOUNG;
-            }
-            else if (randomRate < INIT_ADULT_RATE)
-            {
-                p->stage = ADULT;
-                p->moveChance = MOVE_HUMAN_ADULT;
-            }
-            else
-            {
-                p->stage = ELDER;
-                p->moveChance = MOVE_HUMAN_ELDER;
-            }
-
-            p->status = HEALTHY;
-
+            createHuman(p, drand48());
             humanCount++;
         }
     }
@@ -77,13 +55,7 @@ void initMatrix(Entity ** matrix, int size_x, int size_y)
 
         if (p->type == EMPTY)
         {
-            p->type = ZOMBIE;
-            randomRate = drand48();
-            p->gender = INV;
-            p->stage = NIL;
-            p->moveChance = MOVE_ZOMBIE;
-            p->status = NONE;
-
+            createZombie(p);
             zombieCount++;
         }
     }
