@@ -3,8 +3,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-#ifdef _OPENMP
-#include <omp.h>
+#ifdef _OPENMP#include <omp.h>
 #endif
 
 #include "constants.h"
