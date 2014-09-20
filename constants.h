@@ -5,7 +5,7 @@
 #define SIZEX   500
 #define SIZEY   500
 
-#define YEAR    365
+#define YEAR    3650
 
 #define INIT_HUMAN_NUM      0.17*SIZEX*SIZEY
 #define INIT_ZOMBIE_NUM     2
@@ -16,7 +16,7 @@
 #define AGE_BABY_MAX        6
 #define AGE_YOUNG_MAX       18
 #define AGE_ADULT_MAX       60
-#define AGE_ELDER_MAX       120
+#define AGE_ELDER_MAX       85
 
 // stage: bady(0-0.05) young(0.05-0.2) adult(0.2-0.8) elderly(0.8-1)
 #define INIT_BABY_RATE      0.05
