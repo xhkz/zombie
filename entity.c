@@ -35,6 +35,25 @@ bool pairBirth(Entity * p, Entity * neighbor, Entity * child)
     return false;
 }
 
+void randomInfection(Entity * p, Entity **matrix_a, Entity **matrix_b, int i, int j)
+{
+    if (i > 1 && pairInfection(p, &matrix_a[i-1][j])) copyEntity(p, &matrix_b[i-1][j]);
+    if (i < SIZEX && pairInfection(p, &matrix_a[i+1][j])) copyEntity(p, &matrix_b[i+1][j]);
+    if (j > 1 && pairInfection(p, &matrix_a[i][j-1])) copyEntity(p, &matrix_b[i][j-1]);
+    if (j < SIZEY && pairInfection(p, &matrix_a[i][j+1])) copyEntity(p, &matrix_b[i][j+1]);
+}
+
+bool pairInfection(Entity * p, Entity * neighbor)
+{
+    if (p->type == HUMAN && neighbor->type == ZOMBIE && drand48() < INFECTION_RATE)
+    {
+        clearEntity(p);
+        createZombie(p);
+        return true;
+    }
+    return false;
+}
+
 void moveEntity(Entity * src, Entity * dest)
 {
     if (src->type != EMPTY && dest->type == EMPTY)

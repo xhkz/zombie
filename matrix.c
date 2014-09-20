@@ -75,6 +75,7 @@ void process(Entity **matrix_a, Entity **matrix_b, int i, int j)
         double moveChance = cell_a->moveChance;
 
         randomBirth(cell_a, matrix_a, matrix_b, i, j);
+        randomInfection(cell_a, matrix_a, matrix_b, i, j);
 
         if (move < 1.0*moveChance && matrix_a[i-1][j].type == EMPTY && matrix_b[i-1][j].type == EMPTY)
         {

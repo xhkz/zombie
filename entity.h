@@ -38,5 +38,7 @@ void copyEntity(Entity * source, Entity * target);
 void createHuman(Entity * entity, double rnd, Stage s);
 void createZombie(Entity * entity);
 void growup(Entity * entity);
+bool pairInfection(Entity * p, Entity * neighbor);
+void randomInfection(Entity * p, Entity **matrix_a, Entity **matrix_b, int i, int j);
 
 #endif // ENTITY_H_INCLUDED
