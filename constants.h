@@ -1,11 +1,11 @@
 #ifndef CONSTANTS_H_INCLUDED
 #define CONSTANTS_H_INCLUDED
 
-#define STEPS   365
+#define STEPS   YEAR*10
 #define SIZEX   500
 #define SIZEY   500
 
-#define YEAR    3650
+#define YEAR    365
 
 #define INIT_HUMAN_NUM      0.17*SIZEX*SIZEY
 #define INIT_ZOMBIE_NUM     2
@@ -32,10 +32,10 @@
 
 #define BIRTH_RATE_HUMAN    0.0138
 #define BIRTH_RATE_PAIR     BIRTH_RATE_HUMAN*2*2/0.6 // 2 children per adult pair
-#define DEATH_RATE_HUMAN    0.00756
-#define DEATH_RATE_ZOMBIE   0.01
+#define DEATH_RATE_HUMAN    0.00015 //the death rate of healthy humans (the infected human are excluded)
+#define DEATH_RATE_ZOMBIE   0.03 //zombies can live about 1 month
 
-#define INFECTION_RATE      0.05
+#define INFECTION_RATE      0.2
 
 #endif // CONSTANTS_H_INCLUDED
 

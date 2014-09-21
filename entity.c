@@ -29,7 +29,8 @@ bool pairBirth(Entity * p, Entity * neighbor, Entity * child)
     if (neighbor->type == HUMAN && neighbor->stage == ADULT && neighbor->gender != p->gender
             && neighbor->status == HEALTHY && child->type == EMPTY && drand48() < BIRTH_RATE_HUMAN)
     {
-        createHuman(child, 0.0, BABY);
+        createHuman(child, drand48(), BABY);
+        child->age = 0;
         return true;
     }
     return false;
@@ -37,6 +38,7 @@ bool pairBirth(Entity * p, Entity * neighbor, Entity * child)
 
 void randomInfection(Entity * p, Entity **matrix_a, Entity **matrix_b, int i, int j)
 {
+    //human who are infected will become zombies within one day
     if (i > 1 && pairInfection(p, &matrix_a[i-1][j])) copyEntity(p, &matrix_b[i-1][j]);
     if (i < SIZEX && pairInfection(p, &matrix_a[i+1][j])) copyEntity(p, &matrix_b[i+1][j]);
     if (j > 1 && pairInfection(p, &matrix_a[i][j-1])) copyEntity(p, &matrix_b[i][j-1]);
@@ -140,9 +142,10 @@ void growup(Entity * entity)
         case ADULT:
             if (entity->age >= AGE_ADULT_MAX) entity->stage = ELDER;
             break;
-        case ELDER:
+        //to ballance the population, delete the normal death of elders.
+        /*case ELDER:
             if (entity->age >= AGE_ELDER_MAX) clearEntity(entity);
-            break;
+            break;*/
         default:
             ;
         }
