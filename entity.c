@@ -29,7 +29,7 @@ bool pairBirth(Entity * p, Entity * neighbor, Entity * child)
     if (neighbor->type == HUMAN && neighbor->stage == ADULT && neighbor->gender != p->gender
             && neighbor->status == HEALTHY && child->type == EMPTY && drand48() < BIRTH_RATE_PAIR)
     {
-        createHuman(child, drand48(), BABY);
+        createHuman(child, BABY);
         child->age = 0;
         return true;
     }
@@ -87,24 +87,26 @@ void copyEntity(Entity * src, Entity * dest)
     dest->steps = src->steps;
 }
 
-void createHuman(Entity * p, double rnd, Stage s)
+void createHuman(Entity * p, Stage s)
 {
+    double stageRandom = drand48();
+
     p->type = HUMAN;
-    p->gender = rnd > INIT_GENDER_RATE ? MALE : FEMALE;
-    double stageramdon = drand48();
-    if (stageramdon < INIT_BABY_RATE || s == BABY)
+    p->gender = drand48() > INIT_GENDER_RATE ? MALE : FEMALE;
+
+    if (stageRandom < INIT_BABY_RATE || s == BABY)
     {
         p->age = (int)(drand48() * AGE_BABY_MAX);
         p->stage = BABY;
         p->moveChance = MOVE_HUMAN_BABY;
     }
-    else if (stageramdon < INIT_YOUNG_RATE || s == YOUNG)
+    else if (stageRandom < INIT_YOUNG_RATE || s == YOUNG)
     {
         p->age = (int)(AGE_BABY_MAX + drand48() * (AGE_YOUNG_MAX - AGE_BABY_MAX));
         p->stage = YOUNG;
         p->moveChance = MOVE_HUMAN_YOUNG;
     }
-    else if (stageramdon < INIT_ADULT_RATE || s == ADULT)
+    else if (stageRandom < INIT_ADULT_RATE || s == ADULT)
     {
         p->age = (int)(AGE_YOUNG_MAX + drand48() * (AGE_ADULT_MAX - AGE_YOUNG_MAX));
         p->stage = ADULT;

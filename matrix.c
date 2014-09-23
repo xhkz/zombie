@@ -43,7 +43,7 @@ void initMatrix(Entity ** matrix, int size_x, int size_y)
 
         if (p->type == EMPTY)
         {
-            createHuman(p, drand48(), NIL);
+            createHuman(p, NIL);
             humanCount++;
         }
     }

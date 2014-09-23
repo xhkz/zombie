@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
+#include <unistd.h>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -44,9 +45,21 @@ void unlock(int i, bool *locks)
 
 int main(int argc, char **argv)
 {
-    //srandom((unsigned int)time(NULL));
+    srandom((unsigned int)time(NULL));
     srand48((unsigned int)time(NULL));
-    
+
+    bool debug = false;
+
+    int c;
+    while ((c = getopt (argc, argv, "d")) != -1)
+        switch (c)
+        {
+        case 'd':
+            debug = true;
+            break;
+        default:
+            ;
+        }
 
     bool *locks = (bool *)malloc((SIZEX + 2) * sizeof(bool));
 
@@ -63,13 +76,16 @@ int main(int argc, char **argv)
     for (int n = 0; n < STEPS; n++)
     {
 #ifdef _OPENMP
-#pragma omp parallel for default(none) shared(matrix_a, matrix_b, n, locks)
+        #pragma omp parallel for default(none) shared(matrix_a, matrix_b, n, locks, debug)
 #endif
         for (int i = 1; i <= SIZEX; i++)
         {
 #ifdef _OPENMP
             lock(i, locks);
 #endif
+            if (debug)
+                printf("step: %d, index_x: %d, thread_id: %d\n", n, i, omp_get_thread_num());
+
             for (int j = 1; j <= SIZEY; j++)
             {
                 process(matrix_a, matrix_b, i, j);

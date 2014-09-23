@@ -35,7 +35,7 @@ bool pairBirth(Entity * p, Entity * neighbor, Entity * child);
 void moveEntity(Entity * src, Entity * dest);
 void clearEntity(Entity * p);
 void copyEntity(Entity * source, Entity * target);
-void createHuman(Entity * entity, double rnd, Stage s);
+void createHuman(Entity * entity, Stage s);
 void createZombie(Entity * entity);
 void growup(Entity * entity);
 bool pairInfection(Entity * p, Entity * neighbor);

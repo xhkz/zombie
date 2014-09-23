@@ -33,10 +33,12 @@ void print_population(Entity **matrix, int step)
                 total_zombie++;
                 break;
             default:
-                total_Population = total_male + total_female + total_zombie;
+                ;
             }
         }
     }
+
+    total_Population = total_male + total_female + total_zombie;
 
     printf("%d,male:%d,female:%d,baby:%d,young:%d,adult:%d,elder:%d,zombie:%d,total_Population:%d\n",
            step, total_male, total_female, total_baby, total_young, total_adult, total_elder, total_zombie, total_Population);
