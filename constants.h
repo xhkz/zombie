@@ -1,4 +1,4 @@
-#ifndef CONSTANTS_H_INCLUDED
+ï»¿#ifndef CONSTANTS_H_INCLUDED
 #define CONSTANTS_H_INCLUDED
 
 #define STEPS   YEAR*10
@@ -30,10 +30,20 @@
 #define MOVE_HUMAN_ELDER    0.05
 #define MOVE_ZOMBIE         0.2
 
+/*
+ * A pair consists of 2 adults, which possess about 60 percent of total population
+ * A new baby can be located in 8 directions
+*/
+
 #define BIRTH_RATE_HUMAN    0.0138
-#define BIRTH_RATE_PAIR     BIRTH_RATE_HUMAN*2*8/0.6/YEAR // 2 children per adult pair
-#define DEATH_RATE_HUMAN    0.00756/YEAR //the death rate of healthy humans (the infected human are excluded)
-#define DEATH_RATE_ZOMBIE   0.033 //zombies can live about 1 month
+#define BIRTH_RATE_PAIR     BIRTH_RATE_HUMAN*2*8/0.6/YEAR
+
+/*
+ * the death rate of healthy humans excluding the infected human
+ * zombies can live about 1 month
+*/
+#define DEATH_RATE_HUMAN    0.00756/YEAR 
+#define DEATH_RATE_ZOMBIE   0.033
 
 #define INFECTION_RATE      0.216
 
@@ -47,12 +57,12 @@
     Birth rate: 13.8 /1000
     Death rate: 7.56 /1000
     Age structure:
-        0â€?4 years â€?18.2%
-        15â€?5 years â€?67.5%
-            15-24 years â€?13.5%
-            25-54 years â€?42.2%
-            55â€?4 years â€?11.8%
-        65 years and over â€?14.4%
+        0â€“14 years â€“ 18.2%
+        15â€“65 years â€“ 67.5%
+            15-24 years â€“ 13.5%
+            25-54 years â€“ 42.2%
+            55â€“64 years â€“ 11.8%
+        65 years and over â€“ 14.4%
 
     Northern_Territory
     Area:         1,420,970 kmÂ²
