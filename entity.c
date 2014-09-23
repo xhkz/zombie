@@ -27,7 +27,7 @@ void randomBirth(Entity * p, Entity **matrix_a, Entity **matrix_b, int i, int j)
 bool pairBirth(Entity * p, Entity * neighbor, Entity * child)
 {
     if (neighbor->type == HUMAN && neighbor->stage == ADULT && neighbor->gender != p->gender
-            && neighbor->status == HEALTHY && child->type == EMPTY && drand48() < BIRTH_RATE_HUMAN)
+            && neighbor->status == HEALTHY && child->type == EMPTY && drand48() < BIRTH_RATE_PAIR)
     {
         createHuman(child, drand48(), BABY);
         child->age = 0;
@@ -91,19 +91,20 @@ void createHuman(Entity * p, double rnd, Stage s)
 {
     p->type = HUMAN;
     p->gender = rnd > INIT_GENDER_RATE ? MALE : FEMALE;
-    if (rnd < INIT_BABY_RATE || s == BABY)
+    double stageramdon = drand48();
+    if (stageramdon < INIT_BABY_RATE || s == BABY)
     {
         p->age = (int)(drand48() * AGE_BABY_MAX);
         p->stage = BABY;
         p->moveChance = MOVE_HUMAN_BABY;
     }
-    else if (rnd < INIT_YOUNG_RATE || s == YOUNG)
+    else if (stageramdon < INIT_YOUNG_RATE || s == YOUNG)
     {
         p->age = (int)(AGE_BABY_MAX + drand48() * (AGE_YOUNG_MAX - AGE_BABY_MAX));
         p->stage = YOUNG;
         p->moveChance = MOVE_HUMAN_YOUNG;
     }
-    else if (rnd < INIT_ADULT_RATE || s == ADULT)
+    else if (stageramdon < INIT_ADULT_RATE || s == ADULT)
     {
         p->age = (int)(AGE_YOUNG_MAX + drand48() * (AGE_ADULT_MAX - AGE_YOUNG_MAX));
         p->stage = ADULT;
@@ -142,10 +143,9 @@ void growup(Entity * entity)
         case ADULT:
             if (entity->age >= AGE_ADULT_MAX) entity->stage = ELDER;
             break;
-        //to ballance the population, delete the normal death of elders.
-        /*case ELDER:
+        case ELDER:
             if (entity->age >= AGE_ELDER_MAX) clearEntity(entity);
-            break;*/
+            break;
         default:
             ;
         }

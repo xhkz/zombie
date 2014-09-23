@@ -31,9 +31,9 @@
 #define MOVE_ZOMBIE         0.2
 
 #define BIRTH_RATE_HUMAN    0.0138
-#define BIRTH_RATE_PAIR     BIRTH_RATE_HUMAN*2*2/0.6 // 2 children per adult pair
-#define DEATH_RATE_HUMAN    0.00015 //the death rate of healthy humans (the infected human are excluded)
-#define DEATH_RATE_ZOMBIE   0.03 //zombies can live about 1 month
+#define BIRTH_RATE_PAIR     BIRTH_RATE_HUMAN*2*8/0.6/YEAR // 2 children per adult pair
+#define DEATH_RATE_HUMAN    0.00756/YEAR //the death rate of healthy humans (the infected human are excluded)
+#define DEATH_RATE_ZOMBIE   0.033 //zombies can live about 1 month
 
 #define INFECTION_RATE      0.2
 

@@ -44,8 +44,9 @@ void unlock(int i, bool *locks)
 
 int main(int argc, char **argv)
 {
-    srandom((unsigned int)time(NULL));
+    //srandom((unsigned int)time(NULL));
     srand48((unsigned int)time(NULL));
+    
 
     bool *locks = (bool *)malloc((SIZEX + 2) * sizeof(bool));
 

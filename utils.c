@@ -13,8 +13,7 @@ void print_population(Entity **matrix, int step)
         total_adult = 0,
         total_elder = 0,
         total_zombie = 0,
-        total_empty = 0,
-        total_population =0;
+        total_empty = 0;
 
     for (int i = 1; i <= SIZEY; i++)
     {
@@ -35,13 +34,12 @@ void print_population(Entity **matrix, int step)
                 break;
             default:
                 total_empty++;
-
             }
         }
     }
-    total_population= total_male+total_female+total_zombie;
-    printf("%d,male:%d,female:%d,baby:%d,young:%d,adult:%d,elder:%d,zombie:%d,empty:%d\n,total-population:%d\n",
-           step, total_male, total_female, total_baby, total_young, total_adult, total_elder, total_zombie, total_empty,total_population);
+
+    printf("%d,male:%d,female:%d,baby:%d,young:%d,adult:%d,elder:%d,zombie:%d,empty:%d\n",
+           step, total_male, total_female, total_baby, total_young, total_adult, total_elder, total_zombie, total_empty);
 }
 
 void print_matrix(Entity **matrix, int t)
