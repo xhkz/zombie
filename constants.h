@@ -16,7 +16,7 @@
 #define AGE_BABY_MAX        6
 #define AGE_YOUNG_MAX       18
 #define AGE_ADULT_MAX       60
-#define AGE_ELDER_MAX       85
+#define AGE_ELDER_MAX       90
 
 // stage: bady(0-0.05) young(0.05-0.2) adult(0.2-0.8) elderly(0.8-1)
 #define INIT_BABY_RATE      0.05
@@ -35,7 +35,7 @@
 #define DEATH_RATE_HUMAN    0.00756/YEAR //the death rate of healthy humans (the infected human are excluded)
 #define DEATH_RATE_ZOMBIE   0.033 //zombies can live about 1 month
 
-#define INFECTION_RATE      0.2
+#define INFECTION_RATE      0.216
 
 #endif // CONSTANTS_H_INCLUDED
 
@@ -47,12 +47,12 @@
     Birth rate: 13.8 /1000
     Death rate: 7.56 /1000
     Age structure:
-        0â€“14 years â€“ 18.2%
-        15â€“65 years â€“ 67.5%
-            15-24 years â€“ 13.5%
-            25-54 years â€“ 42.2%
-            55â€“64 years â€“ 11.8%
-        65 years and over â€“ 14.4%
+        0â€?4 years â€?18.2%
+        15â€?5 years â€?67.5%
+            15-24 years â€?13.5%
+            25-54 years â€?42.2%
+            55â€?4 years â€?11.8%
+        65 years and over â€?14.4%
 
     Northern_Territory
     Area:         1,420,970 kmÂ²
