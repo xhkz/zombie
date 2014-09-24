@@ -1,8 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #include "entity.h"
 #include "constants.h"
+#include "random.h"
 
 Entity **createMatrix(int size_x, int size_y)
 {
@@ -23,7 +27,7 @@ Entity **createMatrix(int size_x, int size_y)
 
 int randomPos(int limit)
 {
-    return 1 + (rand() % limit);
+    return 1 + irandom(limit);
 }
 
 void initMatrix(Entity ** matrix, int size_x, int size_y)
@@ -35,29 +39,45 @@ void initMatrix(Entity ** matrix, int size_x, int size_y)
 
     Entity * p = NULL;
 
-    while (humanCount < INIT_HUMAN_NUM)
+#ifdef _OPENMP
+    #pragma omp parallel private(p) shared(humanCount)
+#endif
     {
-        posX = randomPos(SIZEX);
-        posY = randomPos(SIZEY);
-        p = &matrix[posX][posY];
-
-        if (p->type == EMPTY)
+        while (humanCount < INIT_HUMAN_NUM)
         {
-            createHuman(p, NIL);
-            humanCount++;
+            posX = randomPos(SIZEX);
+            posY = randomPos(SIZEY);
+            p = &matrix[posX][posY];
+
+            if (p->type == EMPTY)
+            {
+                #pragma omp critical
+                {
+                    createHuman(p, NIL);
+                    humanCount++;
+                }
+            }
         }
     }
 
-    while (zombieCount < INIT_ZOMBIE_NUM)
+#ifdef _OPENMP
+    #pragma omp parallel private(p) shared(zombieCount)
+#endif
     {
-        posX = randomPos(SIZEX);
-        posY = randomPos(SIZEY);
-        p = &matrix[posX][posY];
-
-        if (p->type == EMPTY)
+        while(zombieCount < INIT_ZOMBIE_NUM)
         {
-            createZombie(p);
-            zombieCount++;
+            posX = randomPos(SIZEX);
+            posY = randomPos(SIZEY);
+            p = &matrix[posX][posY];
+
+            if (p->type == EMPTY)
+            {
+                #pragma omp critical
+                {
+                    createZombie(p);
+                    zombieCount++;
+                }
+            }
         }
     }
 }
@@ -71,7 +91,7 @@ void process(Entity **matrix_a, Entity **matrix_b, int i, int j)
 
     if (cell_a->type != EMPTY)
     {
-        double move = drand48();
+        double move = drandom();
         double moveChance = cell_a->moveChance;
 
         randomBirth(cell_a, matrix_a, matrix_b, i, j);
@@ -98,7 +118,7 @@ void process(Entity **matrix_a, Entity **matrix_b, int i, int j)
             cell_b = &matrix_b[i][j];
         }
 
-        if (!randomDeath(cell_a, drand48()))
+        if (!randomDeath(cell_a, drandom()))
         {
             cell_a->steps++;
             copyEntity(cell_a, cell_b);

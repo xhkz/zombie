@@ -1,13 +1,11 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
+#include <time.h>
 
-/* mt19937int.c */
-static void init_twister(void);
-static void sgenrand(unsigned long int rng_num, unsigned long seed);
-static unsigned long genrand(unsigned long int rng_num);
-
-/* Make the size dynamic eventually. */
-#define	MAX_DESC	100
-
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 /* A C-program for MT19937: Integer     version                   */
 /*  genrand() generates one pseudorandom unsigned integer (32bit) */
@@ -37,9 +35,12 @@ static unsigned long genrand(unsigned long int rng_num);
 /* see http://www.math.keio.ac.jp/matumoto/emt.html or email       */
 /* matumoto@math.keio.ac.jp                                        */
 
+#include "random.h"
 
-#include<stdio.h>
+#define NUM_RNG 64
 
+/* Make the size dynamic eventually. */
+#define MAX_DESC    100
 
 /* Period parameters */
 #define N 624
@@ -56,22 +57,22 @@ static unsigned long genrand(unsigned long int rng_num);
 #define TEMPERING_SHIFT_T(y)  (y << 15)
 #define TEMPERING_SHIFT_L(y)  (y >> 18)
 
-
-#define	NUM_RNG	100		/* JTD */
-
-
 static unsigned long mt[NUM_RNG][N]; /* the array for the state vector  */
 /* was static int mti=N+1;  mti[x]==N+1 means mt[x][N] is not initialized */
 static int mti[NUM_RNG]; /* mti[x]==N+1 means mt[x][N] is not initialized */
 
+static void init_twister(void);
+static void sgenrand(unsigned long int rng_num, unsigned long seed);
+static unsigned long genrand(unsigned long int rng_num);
 
 /*+ Call this before sgenrand. +*/
 static void init_twister(void)
 {
-    int		i;
+    int i;
 
-    for (i = 0; i < NUM_RNG; i++) {
-	mti[i] = N+1;	/* mti[x]==N+1 means mt[x][N] is not initialized */
+    for (i = 0; i < NUM_RNG; i++)
+    {
+        mti[i] = N+1; /* mti[x]==N+1 means mt[x][N] is not initialized */
     }
 }
 
@@ -86,7 +87,7 @@ static void sgenrand(unsigned long int rng_num, unsigned long seed)
     mt[rng_num][0]= seed & 0xffffffffU;
     for (mti[rng_num]=1; mti[rng_num]<N; mti[rng_num]++)
         mt[rng_num][mti[rng_num]] = (69069 * mt[rng_num][mti[rng_num]-1]) &
-	    0xffffffffU;
+                                    0xffffffffU;
 }
 
 
@@ -95,44 +96,49 @@ static unsigned long genrand(unsigned long int rng_num)
 {
     unsigned long y;
 
-    static int	first = 1;
-/* was static unsigned long mag01[2]={0x0, MATRIX_A}; */
+    static int  first = 1;
+    /* was static unsigned long mag01[2]={0x0, MATRIX_A}; */
     static unsigned long mag01[NUM_RNG][2];
     /* mag01[rng_num][x] = x * MATRIX_A  for x=0,1 */
 
     assert(rng_num < NUM_RNG);
 
-	/* Init mag01 */
-    if (first == 1) {
-	int	i;
+    /* Init mag01 */
+    if (first == 1)
+    {
+        int i;
 
-	for (i = 0; i < NUM_RNG; i++) {
-	    mag01[i][0] = 0x0;
-	    mag01[i][1] = MATRIX_A;
-	}
+        for (i = 0; i < NUM_RNG; i++)
+        {
+            mag01[i][0] = 0x0;
+            mag01[i][1] = MATRIX_A;
+        }
 
-	first = 0;
+        first = 0;
     }
 
-    if (mti[rng_num] >= N) { /* generate N words at one time */
+    if (mti[rng_num] >= N)   /* generate N words at one time */
+    {
         int kk;
 
         if (mti[rng_num] == N+1) /* if sgenrand() has not been called, */
-            sgenrand(rng_num, 4357);	 /* a default initial seed is used   */
+            sgenrand(rng_num, 4357);     /* a default initial seed is used   */
 
-        for (kk=0;kk<N-M;kk++) {
+        for (kk=0; kk<N-M; kk++)
+        {
             y = (mt[rng_num][kk]&UPPER_MASK)|(mt[rng_num][kk+1]&LOWER_MASK);
             mt[rng_num][kk] = mt[rng_num][kk+M] ^
-		(y >> 1) ^ mag01[rng_num][y & 0x1];
+                              (y >> 1) ^ mag01[rng_num][y & 0x1];
         }
-        for (;kk<N-1;kk++) {
+        for (; kk<N-1; kk++)
+        {
             y = (mt[rng_num][kk]&UPPER_MASK)|(mt[rng_num][kk+1]&LOWER_MASK);
             mt[rng_num][kk] = mt[rng_num][kk+(M-N)] ^
-		(y >> 1) ^ mag01[rng_num][y & 0x1];
+                              (y >> 1) ^ mag01[rng_num][y & 0x1];
         }
         y = (mt[rng_num][N-1]&UPPER_MASK)|(mt[rng_num][0]&LOWER_MASK);
         mt[rng_num][N-1] = mt[rng_num][M-1] ^
-	    (y >> 1) ^ mag01[rng_num][y & 0x1];
+                           (y >> 1) ^ mag01[rng_num][y & 0x1];
 
         mti[rng_num] = 0;
     }
@@ -146,36 +152,37 @@ static unsigned long genrand(unsigned long int rng_num)
     return y;
 }
 
-
-/*+ Open a file, exit with message on exit on failure. +*/
-static FILE * Vfopen(const char *FileName, const char *mode)
+void initRandom()
 {
-    FILE	*fp;
+    srand48((unsigned long int)time(NULL));
 
-    assert(FileName != NULL);
-    assert(strlen(FileName) > 0);
-    assert(mode != NULL);
+    init_twister();
 
-    fp = fopen(FileName, mode);
-    if (fp == NULL) {
-	fprintf(stderr, "erfi: Fatal Error: failed to open "
-		"file '%s' in mode '%s'", FileName, mode);
-	exit(EXIT_FAILURE);
+    int i = 0;
+    for (i = 0; i < NUM_RNG; i++)
+    {
+        sgenrand(i, lrand48());
     }
-    return fp;
 }
 
-
-/*+ Write output to ERFI_OUT environment variable or stderr. */
-static void Write_Output(const char *buf, ERFI_Fault_Action FA)
+double drandom(void)
 {
-    FILE	*fp;
+    int threadId = 0;
 
-    if (Print_File_Name != NULL && FA == ERFI_Print_Env) {
-	fp = Vfopen(Print_File_Name, "a");
-	fprintf(fp, buf);
-	fclose(fp);
-    } else {
-	fprintf(stderr, buf);
-    }
+#ifdef _OPENMP
+    threadId = omp_get_thread_num();
+    srand48(genrand(threadId));
+#endif
+
+    return drand48();
+}
+
+int irandom(int limit)
+{
+    int threadId = 0;
+#ifdef _OPENMP
+    threadId = omp_get_thread_num();
+#endif
+
+    return genrand(threadId) % limit;
 }

@@ -12,6 +12,7 @@
 #include "entity.h"
 #include "utils.h"
 #include "matrix.h"
+#include "random.h"
 
 #ifdef _OPENMP
 void lock(int i, bool *locks)
@@ -45,8 +46,7 @@ void unlock(int i, bool *locks)
 
 int main(int argc, char **argv)
 {
-    srandom((unsigned int)time(NULL));
-    srand48((unsigned int)time(NULL));
+    initRandom();
 
     bool debug = false;
 

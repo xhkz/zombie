@@ -4,6 +4,7 @@
 
 #include "entity.h"
 #include "constants.h"
+#include "random.h"
 
 
 bool randomDeath(Entity * p, double rnd)
@@ -27,7 +28,7 @@ void randomBirth(Entity * p, Entity **matrix_a, Entity **matrix_b, int i, int j)
 bool pairBirth(Entity * p, Entity * neighbor, Entity * child)
 {
     if (neighbor->type == HUMAN && neighbor->stage == ADULT && neighbor->gender != p->gender
-            && neighbor->status == HEALTHY && child->type == EMPTY && drand48() < BIRTH_RATE_PAIR)
+            && neighbor->status == HEALTHY && child->type == EMPTY && drandom() < BIRTH_RATE_PAIR)
     {
         createHuman(child, BABY);
         child->age = 0;
@@ -47,7 +48,7 @@ void randomInfection(Entity * p, Entity **matrix_a, Entity **matrix_b, int i, in
 
 bool pairInfection(Entity * p, Entity * neighbor)
 {
-    if (p->type == HUMAN && neighbor->type == ZOMBIE && drand48() < INFECTION_RATE)
+    if (p->type == HUMAN && neighbor->type == ZOMBIE && drandom() < INFECTION_RATE)
     {
         clearEntity(p);
         createZombie(p);
@@ -89,32 +90,32 @@ void copyEntity(Entity * src, Entity * dest)
 
 void createHuman(Entity * p, Stage s)
 {
-    double stageRandom = drand48();
+    double stageRandom = drandom();
 
     p->type = HUMAN;
-    p->gender = drand48() > INIT_GENDER_RATE ? MALE : FEMALE;
+    p->gender = drandom() > INIT_GENDER_RATE ? MALE : FEMALE;
 
     if (stageRandom < INIT_BABY_RATE || s == BABY)
     {
-        p->age = (int)(drand48() * AGE_BABY_MAX);
+        p->age = (int)(drandom() * AGE_BABY_MAX);
         p->stage = BABY;
         p->moveChance = MOVE_HUMAN_BABY;
     }
     else if (stageRandom < INIT_YOUNG_RATE || s == YOUNG)
     {
-        p->age = (int)(AGE_BABY_MAX + drand48() * (AGE_YOUNG_MAX - AGE_BABY_MAX));
+        p->age = (int)(AGE_BABY_MAX + drandom() * (AGE_YOUNG_MAX - AGE_BABY_MAX));
         p->stage = YOUNG;
         p->moveChance = MOVE_HUMAN_YOUNG;
     }
     else if (stageRandom < INIT_ADULT_RATE || s == ADULT)
     {
-        p->age = (int)(AGE_YOUNG_MAX + drand48() * (AGE_ADULT_MAX - AGE_YOUNG_MAX));
+        p->age = (int)(AGE_YOUNG_MAX + drandom() * (AGE_ADULT_MAX - AGE_YOUNG_MAX));
         p->stage = ADULT;
         p->moveChance = MOVE_HUMAN_ADULT;
     }
     else
     {
-        p->age = (int)(AGE_ADULT_MAX + drand48() * (AGE_ELDER_MAX - AGE_ADULT_MAX));
+        p->age = (int)(AGE_ADULT_MAX + drandom() * (AGE_ELDER_MAX - AGE_ADULT_MAX));
         p->stage = ELDER;
         p->moveChance = MOVE_HUMAN_ELDER;
     }
