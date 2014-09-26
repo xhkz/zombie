@@ -4,16 +4,17 @@
 #include "constants.h"
 #include "entity.h"
 
-void print_population(Entity **matrix, int step)
+Counter counter;
+
+void update_counter(Entity **matrix)
 {
-    int total_male = 0,
-        total_female = 0,
-        total_baby = 0,
-        total_young = 0,
-        total_adult = 0,
-        total_elder = 0,
-        total_zombie = 0,
-        total_Population = 0;
+    unsigned long male = 0,
+                  female = 0,
+                  baby = 0,
+                  young = 0,
+                  adult = 0,
+                  elder = 0,
+                  zombie = 0;
 
     for (int i = 1; i <= SIZEY; i++)
     {
@@ -22,15 +23,15 @@ void print_population(Entity **matrix, int step)
             switch(matrix[i][j].type)
             {
             case HUMAN:
-                if (matrix[i][j].gender == MALE) total_male++;
-                if (matrix[i][j].gender == FEMALE) total_female++;
-                if (matrix[i][j].stage == BABY) total_baby++;
-                if (matrix[i][j].stage == YOUNG) total_young++;
-                if (matrix[i][j].stage == ADULT) total_adult++;
-                if (matrix[i][j].stage == ELDER) total_elder++;
+                if (matrix[i][j].gender == MALE) male++;
+                if (matrix[i][j].gender == FEMALE) female++;
+                if (matrix[i][j].stage == BABY) baby++;
+                if (matrix[i][j].stage == YOUNG) young++;
+                if (matrix[i][j].stage == ADULT) adult++;
+                if (matrix[i][j].stage == ELDER) elder++;
                 break;
             case ZOMBIE:
-                total_zombie++;
+                zombie++;
                 break;
             default:
                 ;
@@ -38,10 +39,20 @@ void print_population(Entity **matrix, int step)
         }
     }
 
-    total_Population = total_male + total_female + total_zombie;
+    counter.male = male;
+    counter.female = female;
+    counter.baby = baby;
+    counter.young = young;
+    counter.adult = adult;
+    counter.elder = elder;
+    counter.zombie = zombie;
+}
 
-    printf("%d,male:%d,female:%d,baby:%d,young:%d,adult:%d,elder:%d,zombie:%d,total_Population:%d\n",
-           step, total_male, total_female, total_baby, total_young, total_adult, total_elder, total_zombie, total_Population);
+void print_population(int step)
+{
+    printf("%d, male:%lu, female:%lu, baby:%lu, young:%lu, adult:%lu, elder:%lu, zombie:%lu, population:%lu\n",
+           step, counter.male, counter.female, counter.baby, counter.young, counter.adult, counter.elder, counter.zombie,
+           (counter.male + counter.female + counter.zombie));
 }
 
 void print_matrix(Entity **matrix, int t)
@@ -50,7 +61,7 @@ void print_matrix(Entity **matrix, int t)
     {
         for (int j = 1; j <= SIZEX; j++)
         {
-            char cell = 'e';
+            char cell = ' ';
 
             switch(matrix[i][j].type)
             {

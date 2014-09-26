@@ -47,6 +47,21 @@
 
 #define INFECTION_RATE      0.216
 
+#define ZOMBIE_DIE_HARD     15
+
+typedef struct
+{
+    unsigned long male;
+    unsigned long female;
+    unsigned long baby;
+    unsigned long young;
+    unsigned long adult;
+    unsigned long elder;
+    unsigned long zombie;
+} Counter;
+
+extern Counter counter;
+
 #endif // CONSTANTS_H_INCLUDED
 
 /*

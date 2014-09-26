@@ -31,9 +31,7 @@ typedef struct {
 
 bool randomDeath(Entity * p);
 void randomBirth(Entity * p, Entity **matrix_a, Entity **matrix_b, int i, int j);
-bool pairBirth(Entity * p, Entity * neighbor, Entity * child);
 void randomInfection(Entity * p, Entity **matrix_a, Entity **matrix_b, int i, int j);
-bool pairInfection(Entity * p, Entity * neighbor);
 void randomWalk(Entity * cell_a, Entity ** cell_b, Entity **matrix_a, Entity **matrix_b, int i, int j);
 void moveEntity(Entity * src, Entity * dest);
 void clearEntity(Entity * p);

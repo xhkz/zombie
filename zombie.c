@@ -73,7 +73,8 @@ int main(int argc, char **argv)
 
     initMatrix(matrix_a, SIZEX, SIZEY);
 
-    print_population(matrix_a, 0);
+    update_counter(matrix_a);
+    print_population(0);
 
     for (int n = 0; n < STEPS; n++)
     {
@@ -103,7 +104,8 @@ int main(int argc, char **argv)
         matrix_a = matrix_b;
         matrix_b = matrix_t;
 
-        print_population(matrix_a, n+1);
+        update_counter(matrix_a);
+        print_population(n+1);
         //print_matrix(matrix_a, n+1);
     }
 
