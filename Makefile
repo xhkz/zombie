@@ -3,7 +3,12 @@ TARGET = zombie
 SRC = $(wildcard *.c)
 OBJS = $(SRC:%.c=%.o)
 
+ifeq ($(HOSTNAME), avoca)
+CC = mpicc
+else
 CC = gcc
+endif
+
 CFLAGS = --std=gnu99 -g -Wall -fopenmp
 LIBS = -lgomp
 
