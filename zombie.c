@@ -46,12 +46,13 @@ void unlock(int i, bool *locks)
 
 int main(int argc, char **argv)
 {
-    initRandom();
+    initRandom(0);
 
     bool debug = false;
 
     int c;
     while ((c = getopt (argc, argv, "d")) != -1)
+    {
         switch (c)
         {
         case 'd':
@@ -60,6 +61,7 @@ int main(int argc, char **argv)
         default:
             ;
         }
+    }
 
     bool *locks = (bool *)malloc((SIZEX + 2) * sizeof(bool));
 

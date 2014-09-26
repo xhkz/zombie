@@ -6,9 +6,9 @@
 #include "constants.h"
 #include "random.h"
 
-
-bool randomDeath(Entity * p, double rnd)
+bool randomDeath(Entity * p)
 {
+    double rnd = drandom();
     return (p->type == HUMAN && rnd < DEATH_RATE_HUMAN) ||
            (p->type == ZOMBIE && rnd < DEATH_RATE_ZOMBIE);
 }
@@ -18,10 +18,10 @@ void randomBirth(Entity * p, Entity **matrix_a, Entity **matrix_b, int i, int j)
     if (p->type == HUMAN && p->stage == ADULT && p->status == HEALTHY)
     {
         //check neighbors, return
-        if (i > 2 && pairBirth(p, &matrix_a[i-1][j], &matrix_b[i-2][j])) return;
-        if (i < SIZEX && pairBirth(p, &matrix_a[i+1][j], &matrix_b[i+2][j])) return;
-        if (j > 2 && pairBirth(p, &matrix_a[i][j-1], &matrix_b[i][j-2])) return;
-        if (j < SIZEY && pairBirth(p, &matrix_a[i][j+1], &matrix_b[i][j+2])) return;
+        if (pairBirth(p, &matrix_a[i-1][j], &matrix_b[i-1][j-1])) return;
+        if (pairBirth(p, &matrix_a[i+1][j], &matrix_b[i+1][j+1])) return;
+        if (pairBirth(p, &matrix_a[i][j-1], &matrix_b[i+1][j-1])) return;
+        if (pairBirth(p, &matrix_a[i][j+1], &matrix_b[i-1][j+1])) return;
     }
 }
 
@@ -40,10 +40,10 @@ bool pairBirth(Entity * p, Entity * neighbor, Entity * child)
 void randomInfection(Entity * p, Entity **matrix_a, Entity **matrix_b, int i, int j)
 {
     //human who are infected will become zombies within one day
-    if (i > 1 && pairInfection(p, &matrix_a[i-1][j])) copyEntity(p, &matrix_b[i-1][j]);
-    if (i < SIZEX && pairInfection(p, &matrix_a[i+1][j])) copyEntity(p, &matrix_b[i+1][j]);
-    if (j > 1 && pairInfection(p, &matrix_a[i][j-1])) copyEntity(p, &matrix_b[i][j-1]);
-    if (j < SIZEY && pairInfection(p, &matrix_a[i][j+1])) copyEntity(p, &matrix_b[i][j+1]);
+    if (pairInfection(p, &matrix_a[i-1][j])) copyEntity(p, &matrix_b[i-1][j]);
+    if (pairInfection(p, &matrix_a[i+1][j])) copyEntity(p, &matrix_b[i+1][j]);
+    if (pairInfection(p, &matrix_a[i][j-1])) copyEntity(p, &matrix_b[i][j-1]);
+    if (pairInfection(p, &matrix_a[i][j+1])) copyEntity(p, &matrix_b[i][j+1]);
 }
 
 bool pairInfection(Entity * p, Entity * neighbor)
@@ -55,6 +55,33 @@ bool pairInfection(Entity * p, Entity * neighbor)
         return true;
     }
     return false;
+}
+
+void randomWalk(Entity * cell_a, Entity ** cell_b, Entity **matrix_a, Entity **matrix_b, int i, int j)
+{
+    double move = drandom();
+    double moveChance = cell_a->moveChance;
+
+    if (move < 1.0*moveChance && matrix_a[i-1][j].type == EMPTY && matrix_b[i-1][j].type == EMPTY)
+    {
+        * cell_b = &matrix_b[i-1][j];
+    }
+    else if (move < 2.0*moveChance && matrix_a[i+1][j].type == EMPTY && matrix_b[i+1][j].type == EMPTY)
+    {
+        * cell_b = &matrix_b[i+1][j];
+    }
+    else if (move < 3.0*moveChance && matrix_a[i][j-1].type == EMPTY && matrix_b[i][j-1].type == EMPTY)
+    {
+        * cell_b = &matrix_b[i][j-1];
+    }
+    else if (move < 4.0*moveChance && matrix_a[i][j+1].type == EMPTY && matrix_b[i][j+1].type == EMPTY)
+    {
+        * cell_b = &matrix_b[i][j+1];
+    }
+    else
+    {
+        * cell_b = &matrix_b[i][j];
+    }
 }
 
 void moveEntity(Entity * src, Entity * dest)
@@ -97,25 +124,25 @@ void createHuman(Entity * p, Stage s)
 
     if (stageRandom < INIT_BABY_RATE || s == BABY)
     {
-        p->age = (int)(drandom() * AGE_BABY_MAX);
+        p->age = irandom(AGE_BABY_MAX);
         p->stage = BABY;
         p->moveChance = MOVE_HUMAN_BABY;
     }
     else if (stageRandom < INIT_YOUNG_RATE || s == YOUNG)
     {
-        p->age = (int)(AGE_BABY_MAX + drandom() * (AGE_YOUNG_MAX - AGE_BABY_MAX));
+        p->age = AGE_BABY_MAX + irandom(AGE_YOUNG_MAX - AGE_BABY_MAX);
         p->stage = YOUNG;
         p->moveChance = MOVE_HUMAN_YOUNG;
     }
     else if (stageRandom < INIT_ADULT_RATE || s == ADULT)
     {
-        p->age = (int)(AGE_YOUNG_MAX + drandom() * (AGE_ADULT_MAX - AGE_YOUNG_MAX));
+        p->age = AGE_YOUNG_MAX + irandom(AGE_ADULT_MAX - AGE_YOUNG_MAX);
         p->stage = ADULT;
         p->moveChance = MOVE_HUMAN_ADULT;
     }
     else
     {
-        p->age = (int)(AGE_ADULT_MAX + drandom() * (AGE_ELDER_MAX - AGE_ADULT_MAX));
+        p->age = AGE_ADULT_MAX + irandom(AGE_ELDER_MAX - AGE_ADULT_MAX);
         p->stage = ELDER;
         p->moveChance = MOVE_HUMAN_ELDER;
     }
@@ -133,7 +160,11 @@ void growup(Entity * entity)
 {
     if (entity->type == HUMAN)
     {
-        if (entity->steps % YEAR == 0) entity->age++;
+        if (entity->steps == YEAR)
+        {
+            entity->age++;
+            entity->steps = 0;
+        }
 
         switch(entity->stage)
         {

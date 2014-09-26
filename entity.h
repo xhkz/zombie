@@ -29,7 +29,7 @@ typedef struct {
     unsigned long long int steps;
 } Entity;
 
-bool randomDeath(Entity * p, double rnd);
+bool randomDeath(Entity * p);
 void randomBirth(Entity * p, Entity **matrix_a, Entity **matrix_b, int i, int j);
 bool pairBirth(Entity * p, Entity * neighbor, Entity * child);
 void moveEntity(Entity * src, Entity * dest);
@@ -39,6 +39,7 @@ void createHuman(Entity * entity, Stage s);
 void createZombie(Entity * entity);
 void growup(Entity * entity);
 bool pairInfection(Entity * p, Entity * neighbor);
+void randomWalk(Entity * cell_a, Entity ** cell_b, Entity **matrix_a, Entity **matrix_b, int i, int j);
 void randomInfection(Entity * p, Entity **matrix_a, Entity **matrix_b, int i, int j);
 
 #endif // ENTITY_H_INCLUDED

@@ -1,7 +1,7 @@
 #ifndef RANDOM_H_INCLUDED
 #define RANDOM_H_INCLUDED
 
-void initRandom(void);
+void initRandom(unsigned long seed);
 double drandom(void);
 int irandom(int limit);
 

@@ -42,7 +42,7 @@
  * the death rate of healthy humans excluding the infected human
  * zombies can live about 1 month
 */
-#define DEATH_RATE_HUMAN    0.00756/YEAR 
+#define DEATH_RATE_HUMAN    0.00756/YEAR
 #define DEATH_RATE_ZOMBIE   0.033
 
 #define INFECTION_RATE      0.216

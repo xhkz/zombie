@@ -39,48 +39,35 @@ void initMatrix(Entity ** matrix, int size_x, int size_y)
 
     Entity * p = NULL;
 
-#ifdef _OPENMP
-    #pragma omp parallel private(p) shared(humanCount)
-#endif
+    while (humanCount < INIT_HUMAN_NUM)
     {
-        while (humanCount < INIT_HUMAN_NUM)
-        {
-            posX = randomPos(SIZEX);
-            posY = randomPos(SIZEY);
-            p = &matrix[posX][posY];
+        posX = randomPos(SIZEX);
+        posY = randomPos(SIZEY);
+        p = &matrix[posX][posY];
 
-            if (p->type == EMPTY)
-            {
-                #pragma omp critical
-                {
-                    createHuman(p, NIL);
-                    humanCount++;
-                }
-            }
+        if (p->type == EMPTY)
+        {
+            createHuman(p, NIL);
+            humanCount++;
         }
     }
 
-#ifdef _OPENMP
-    #pragma omp parallel private(p) shared(zombieCount)
-#endif
-    {
-        while(zombieCount < INIT_ZOMBIE_NUM)
-        {
-            posX = randomPos(SIZEX);
-            posY = randomPos(SIZEY);
-            p = &matrix[posX][posY];
 
-            if (p->type == EMPTY)
-            {
-                #pragma omp critical
-                {
-                    createZombie(p);
-                    zombieCount++;
-                }
-            }
+    while(zombieCount < INIT_ZOMBIE_NUM)
+    {
+        posX = randomPos(SIZEX);
+        posY = randomPos(SIZEY);
+        p = &matrix[posX][posY];
+
+        if (p->type == EMPTY)
+        {
+            createZombie(p);
+            zombieCount++;
         }
     }
+
 }
+
 
 void process(Entity **matrix_a, Entity **matrix_b, int i, int j)
 {
@@ -91,34 +78,10 @@ void process(Entity **matrix_a, Entity **matrix_b, int i, int j)
 
     if (cell_a->type != EMPTY)
     {
-        double move = drandom();
-        double moveChance = cell_a->moveChance;
-
         randomBirth(cell_a, matrix_a, matrix_b, i, j);
         randomInfection(cell_a, matrix_a, matrix_b, i, j);
-
-        if (move < 1.0*moveChance && matrix_a[i-1][j].type == EMPTY && matrix_b[i-1][j].type == EMPTY)
-        {
-            cell_b = &matrix_b[i-1][j];
-        }
-        else if (move < 2.0*moveChance && matrix_a[i+1][j].type == EMPTY && matrix_b[i+1][j].type == EMPTY)
-        {
-            cell_b = &matrix_b[i+1][j];
-        }
-        else if (move < 3.0*moveChance && matrix_a[i][j-1].type == EMPTY && matrix_b[i][j-1].type == EMPTY)
-        {
-            cell_b = &matrix_b[i][j-1];
-        }
-        else if (move < 4.0*moveChance && matrix_a[i][j+1].type == EMPTY && matrix_b[i][j+1].type == EMPTY)
-        {
-            cell_b = &matrix_b[i][j+1];
-        }
-        else
-        {
-            cell_b = &matrix_b[i][j];
-        }
-
-        if (!randomDeath(cell_a, drandom()))
+        randomWalk(cell_a, &cell_b, matrix_a, matrix_b, i, j);
+        if (!randomDeath(cell_a))
         {
             cell_a->steps++;
             copyEntity(cell_a, cell_b);
