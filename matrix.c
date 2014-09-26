@@ -68,7 +68,6 @@ void initMatrix(Entity ** matrix, int size_x, int size_y)
 
 }
 
-
 void process(Entity **matrix_a, Entity **matrix_b, int i, int j)
 {
     Entity * cell_a = &matrix_a[i][j];

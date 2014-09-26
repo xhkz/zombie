@@ -78,7 +78,7 @@ int main(int argc, char **argv)
     for (int n = 0; n < STEPS; n++)
     {
 #ifdef _OPENMP
-        #pragma omp parallel for default(none) shared(matrix_a, matrix_b, n, locks, debug)
+        #pragma omp parallel for default(none) shared(matrix_a, matrix_b, n, locks, debug) schedule(static, SIZEX/omp_get_max_threads())
 #endif
         for (int i = 1; i <= SIZEX; i++)
         {
