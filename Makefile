@@ -20,6 +20,6 @@ zombie: $(OBJS)
 .PHONY: clean
 
 clean:
-	rm -f $(OBJS)
+	rm -f $(OBJS) $(TARGET)
 
 

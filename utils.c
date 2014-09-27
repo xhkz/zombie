@@ -1,4 +1,7 @@
 #include <stdio.h>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #include "utils.h"
 #include "constants.h"
@@ -15,7 +18,9 @@ void update_counter(Entity **matrix)
                   adult = 0,
                   elder = 0,
                   zombie = 0;
-
+#ifdef _OPENMP
+    #pragma omp parallel for default(shared) reduction(+:male,female,baby,young,adult,elder,zombie)
+#endif
     for (int i = 1; i <= SIZEY; i++)
     {
         for (int j = 1; j <= SIZEX; j++)
