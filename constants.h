@@ -16,7 +16,7 @@
 #define AGE_BABY_MAX        6
 #define AGE_YOUNG_MAX       18
 #define AGE_ADULT_MAX       60
-#define AGE_ELDER_MAX       90
+#define AGE_ELDER_MAX       100
 
 // stage: bady(0-0.05) young(0.05-0.2) adult(0.2-0.8) elderly(0.8-1)
 #define INIT_BABY_RATE      0.05
@@ -32,11 +32,11 @@
 
 /*
  * A pair consists of 2 adults, which possess about 60 percent of total population
- * A new baby can be located in 8 directions
+ * A new baby can be located in 8 directions (1 - 0.5^8)
 */
 
 #define BIRTH_RATE_HUMAN    0.0138
-#define BIRTH_RATE_PAIR     BIRTH_RATE_HUMAN*2*8/0.6/YEAR
+#define BIRTH_RATE_PAIR     BIRTH_RATE_HUMAN*2*8/0.6/YEAR/0.996
 
 /*
  * the death rate of healthy humans excluding the infected human
@@ -45,7 +45,7 @@
 #define DEATH_RATE_HUMAN    0.00756/YEAR
 #define DEATH_RATE_ZOMBIE   0.033
 
-#define INFECTION_RATE      0.23
+#define INFECTION_RATE      0.216
 
 #define ZOMBIE_DIE_HARD     15
 

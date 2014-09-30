@@ -24,6 +24,7 @@ bool pairBirth(Entity * p, Entity * neighbor, Entity * child)
     {
         createHuman(child, BABY);
         child->age = 0;
+        child->steps = 0;
         return true;
     }
     return false;
@@ -73,28 +74,30 @@ void randomInfection(Entity * p, Entity **matrix_a, int i, int j)
 
 void randomWalk(Entity * cell_a, Entity ** cell_b, Entity **matrix_a, Entity **matrix_b, int i, int j)
 {
-    double move = drandom();
-    double moveChance = cell_a->moveChance;
+    if (cell_a->type != EMPTY) {
+        double move = drandom();
+        double moveChance = cell_a->moveChance;
 
-    if (move < 1.0*moveChance && matrix_a[i-1][j].type == EMPTY && matrix_b[i-1][j].type == EMPTY)
-    {
-        * cell_b = &matrix_b[i-1][j];
-    }
-    else if (move < 2.0*moveChance && matrix_a[i+1][j].type == EMPTY && matrix_b[i+1][j].type == EMPTY)
-    {
-        * cell_b = &matrix_b[i+1][j];
-    }
-    else if (move < 3.0*moveChance && matrix_a[i][j-1].type == EMPTY && matrix_b[i][j-1].type == EMPTY)
-    {
-        * cell_b = &matrix_b[i][j-1];
-    }
-    else if (move < 4.0*moveChance && matrix_a[i][j+1].type == EMPTY && matrix_b[i][j+1].type == EMPTY)
-    {
-        * cell_b = &matrix_b[i][j+1];
-    }
-    else
-    {
-        * cell_b = &matrix_b[i][j];
+        if (move < 1.0*moveChance && matrix_a[i-1][j].type == EMPTY && matrix_b[i-1][j].type == EMPTY)
+        {
+            * cell_b = &matrix_b[i-1][j];
+        }
+        else if (move < 2.0*moveChance && matrix_a[i+1][j].type == EMPTY && matrix_b[i+1][j].type == EMPTY)
+        {
+            * cell_b = &matrix_b[i+1][j];
+        }
+        else if (move < 3.0*moveChance && matrix_a[i][j-1].type == EMPTY && matrix_b[i][j-1].type == EMPTY)
+        {
+            * cell_b = &matrix_b[i][j-1];
+        }
+        else if (move < 4.0*moveChance && matrix_a[i][j+1].type == EMPTY && matrix_b[i][j+1].type == EMPTY)
+        {
+            * cell_b = &matrix_b[i][j+1];
+        }
+        else
+        {
+            * cell_b = &matrix_b[i][j];
+        }
     }
 }
 
@@ -162,6 +165,7 @@ void createHuman(Entity * p, Stage s)
     }
 
     p->status = HEALTHY;
+    p->steps = irandom(YEAR);
 }
 
 void createZombie(Entity * p)
@@ -183,16 +187,16 @@ void growup(Entity * entity)
         switch(entity->stage)
         {
         case BABY:
-            if (entity->age >= AGE_BABY_MAX) entity->stage = YOUNG;
+            if (entity->age > AGE_BABY_MAX) entity->stage = YOUNG;
             break;
         case YOUNG:
-            if (entity->age >= AGE_YOUNG_MAX) entity->stage = ADULT;
+            if (entity->age > AGE_YOUNG_MAX) entity->stage = ADULT;
             break;
         case ADULT:
-            if (entity->age >= AGE_ADULT_MAX) entity->stage = ELDER;
+            if (entity->age > AGE_ADULT_MAX) entity->stage = ELDER;
             break;
         case ELDER:
-            if (entity->age >= AGE_ELDER_MAX) clearEntity(entity);
+            if (entity->age > AGE_ELDER_MAX) clearEntity(entity);
             break;
         default:
             ;
