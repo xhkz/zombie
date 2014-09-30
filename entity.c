@@ -49,20 +49,26 @@ bool pairInfection(Entity * p, Entity * neighbor)
 
     if (p->type == HUMAN && neighbor->type == ZOMBIE && drandom() < rate)
     {
-        clearEntity(p);
         createZombie(p);
         return true;
     }
+    
+    if (p->type == ZOMBIE && neighbor->type == HUMAN && drandom() < rate)
+    {
+        createZombie(neighbor);
+        return true;
+    }
+
     return false;
 }
 
-void randomInfection(Entity * p, Entity **matrix_a, Entity **matrix_b, int i, int j)
+void randomInfection(Entity * p, Entity **matrix_a, int i, int j)
 {
     //human who are infected will become zombies within one day
-    if (pairInfection(p, &matrix_a[i-1][j])) copyEntity(p, &matrix_b[i-1][j]);
-    if (pairInfection(p, &matrix_a[i+1][j])) copyEntity(p, &matrix_b[i+1][j]);
-    if (pairInfection(p, &matrix_a[i][j-1])) copyEntity(p, &matrix_b[i][j-1]);
-    if (pairInfection(p, &matrix_a[i][j+1])) copyEntity(p, &matrix_b[i][j+1]);
+    pairInfection(p, &matrix_a[i-1][j]);
+    pairInfection(p, &matrix_a[i+1][j]);
+    pairInfection(p, &matrix_a[i][j-1]);
+    pairInfection(p, &matrix_a[i][j+1]);
 }
 
 void randomWalk(Entity * cell_a, Entity ** cell_b, Entity **matrix_a, Entity **matrix_b, int i, int j)

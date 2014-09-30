@@ -45,7 +45,7 @@
 #define DEATH_RATE_HUMAN    0.00756/YEAR
 #define DEATH_RATE_ZOMBIE   0.033
 
-#define INFECTION_RATE      0.216
+#define INFECTION_RATE      0.23
 
 #define ZOMBIE_DIE_HARD     15
 

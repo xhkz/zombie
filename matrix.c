@@ -78,7 +78,7 @@ void process(Entity **matrix_a, Entity **matrix_b, int i, int j)
     if (cell_a->type != EMPTY)
     {
         randomBirth(cell_a, matrix_a, matrix_b, i, j);
-        randomInfection(cell_a, matrix_a, matrix_b, i, j);
+        randomInfection(cell_a, matrix_a, i, j);
         randomWalk(cell_a, &cell_b, matrix_a, matrix_b, i, j);
         if (!randomDeath(cell_a))
         {
