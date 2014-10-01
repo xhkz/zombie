@@ -12,10 +12,10 @@ Entity **createMatrix(int size_x, int size_y)
 {
     Entity **matrix = (Entity **) malloc(size_y * sizeof(Entity));
 
-    for (int i = 0; i < size_y; i++)
+    for (int i = 0; i < size_x; i++)
     {
-        matrix[i] = (Entity *) malloc(size_x * sizeof(Entity));
-        for (int j = 0; j < size_x; j++)
+        matrix[i] = (Entity *) malloc(size_y * sizeof(Entity));
+        for (int j = 0; j < size_y; j++)
         {
             Entity entity = {EMPTY, INV, 0, NIL, 0.0, NONE, 0};
             matrix[i][j] = entity;
@@ -106,4 +106,7 @@ void moveBackInBorder(Entity **matrix)
 
 void clearMatrix(Entity **matrix)
 {
+    for (int i = 0; i < SIZEX + 2; i++)
+        for (int j = 0; j < SIZEY + 2; j++)
+            clearEntity(&matrix[i][j]);
 }

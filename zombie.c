@@ -74,7 +74,10 @@ int main(int argc, char **argv)
     initMatrix(matrix_a, SIZEX, SIZEY);
 
     update_counter(matrix_a);
-    print_population(0);
+    //print_population(0);
+    
+    print_header();
+    print_csv(0);
 
     for (int n = 0; n < STEPS; n++)
     {
@@ -105,7 +108,8 @@ int main(int argc, char **argv)
         matrix_b = matrix_t;
 
         update_counter(matrix_a);
-        print_population(n+1);
+        print_csv(n+1);
+        //print_population(n+1);
         //print_matrix(matrix_a, n+1);
     }
 

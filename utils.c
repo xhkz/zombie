@@ -85,3 +85,15 @@ void print_matrix(Entity **matrix, int t)
         printf("\n");
     }
 }
+
+void print_header(void)
+{
+    printf("days,male,female,baby,young,adult,elder,zombie,population\n");
+}
+
+void print_csv(int step)
+{
+    printf("%d,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu\n",
+           step, counter.male, counter.female, counter.baby, counter.young, counter.adult, counter.elder, counter.zombie,
+           (counter.male + counter.female + counter.zombie));
+}
