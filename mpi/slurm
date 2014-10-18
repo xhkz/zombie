@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # The name of the job:
-#SBATCH --job-name="zombie"
+#SBATCH --job-name="zombie_mpi"
 
 # Number of BlueGene compute nodes used by the job (multiply by 16 to get CPU cores):
-#SBATCH --nodes=1
+#SBATCH --nodes=2
 
 # The maximum running time of the job in days-hours:mins
 #SBATCH --time=0-1:0

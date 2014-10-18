@@ -9,7 +9,7 @@
 
 Counter counter;
 
-void update_counter(Entity **matrix)
+void updateCounter(Entity **matrix)
 {
     unsigned long male = 0,
                   female = 0,
@@ -53,14 +53,14 @@ void update_counter(Entity **matrix)
     counter.zombie = zombie;
 }
 
-void print_population(int step)
+void printPopulation(int step)
 {
     printf("%d, male:%lu, female:%lu, baby:%lu, young:%lu, adult:%lu, elder:%lu, zombie:%lu, population:%lu\n",
            step, counter.male, counter.female, counter.baby, counter.young, counter.adult, counter.elder, counter.zombie,
            (counter.male + counter.female + counter.zombie));
 }
 
-void print_matrix(Entity **matrix, int t)
+void printMatrix(Entity **matrix, int t)
 {
     for (int i = 1; i <= SIZEY; i++)
     {
@@ -86,12 +86,12 @@ void print_matrix(Entity **matrix, int t)
     }
 }
 
-void print_header(void)
+void printHeader(void)
 {
     printf("days,male,female,baby,young,adult,elder,zombie,population\n");
 }
 
-void print_csv(int step)
+void printCSV(int step)
 {
     printf("%d,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu\n",
            step, counter.male, counter.female, counter.baby, counter.young, counter.adult, counter.elder, counter.zombie,

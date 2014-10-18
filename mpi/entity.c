@@ -53,7 +53,7 @@ bool pairInfection(Entity * p, Entity * neighbor)
         createZombie(p);
         return true;
     }
-    
+
     if (p->type == ZOMBIE && neighbor->type == HUMAN && drandom() < rate)
     {
         createZombie(neighbor);

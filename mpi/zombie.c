@@ -8,6 +8,8 @@
 #include <omp.h>
 #endif
 
+#include <mpi.h>
+
 #include "constants.h"
 #include "entity.h"
 #include "utils.h"
@@ -51,7 +53,7 @@ int main(int argc, char **argv)
     bool debug = false;
 
     int c;
-    while ((c = getopt (argc, argv, "d")) != -1)
+    while ((c = getopt(argc, argv, "d")) != -1)
     {
         switch (c)
         {
@@ -64,23 +66,28 @@ int main(int argc, char **argv)
     }
 
     bool *locks = (bool *)malloc((SIZEX + 2) * sizeof(bool));
-
     for (int i = 0; i < SIZEX + 2; i++)
         locks[i] = false;
 
     Entity **matrix_a = createMatrix(SIZEX + 2, SIZEY + 2);
     Entity **matrix_b = createMatrix(SIZEX + 2, SIZEY + 2);
-
     initMatrix(matrix_a, SIZEX, SIZEY);
 
-    update_counter(matrix_a);
-    //print_population(0);
-    
-    print_header();
-    print_csv(0);
+    int rank, size;
+    MPI_Status status;
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+    updateCounter(matrix_a);
+    printHeader();
+    printCSV(0);
 
     for (int n = 0; n < STEPS; n++)
     {
+
+        /* TODO: set neighbores and borders */
+
 #ifdef _OPENMP
         #pragma omp parallel for default(none) shared(matrix_a, matrix_b, n, locks, debug) schedule(static, SIZEX/omp_get_max_threads())
 #endif
@@ -100,18 +107,19 @@ int main(int argc, char **argv)
             unlock(i, locks);
 #endif
         }
-        moveBackInBorder(matrix_b);
 
-        //swap matrix
+        /* TODO: transfer ownership */
+
+        moveBackInBorder(matrix_b);
         Entity **matrix_t = matrix_a;
         matrix_a = matrix_b;
         matrix_b = matrix_t;
 
-        update_counter(matrix_a);
-        print_csv(n+1);
-        //print_population(n+1);
-        //print_matrix(matrix_a, n+1);
+        updateCounter(matrix_a);
+        printCSV(n+1);
     }
+
+    MPI_Finalize();
 
     return 0;
 }
