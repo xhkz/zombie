@@ -10,7 +10,7 @@
 
 Entity **createMatrix(int size_x, int size_y)
 {
-    Entity **matrix = (Entity **) malloc(size_y * sizeof(Entity));
+    Entity **matrix = (Entity **) malloc(size_x * sizeof(Entity *));
 
     for (int i = 0; i < size_x; i++)
     {
@@ -80,11 +80,13 @@ void process(Entity **matrix_a, Entity **matrix_b, int i, int j)
         randomBirth(cell_a, matrix_a, matrix_b, i, j);
         randomInfection(cell_a, matrix_a, i, j);
         randomWalk(cell_a, &cell_b, matrix_a, matrix_b, i, j);
+
         if (!randomDeath(cell_a))
         {
             cell_a->steps++;
             copyEntity(cell_a, cell_b);
         }
+
         clearEntity(cell_a);
     }
 }
@@ -109,4 +111,12 @@ void clearMatrix(Entity **matrix)
     for (int i = 0; i < SIZEX + 2; i++)
         for (int j = 0; j < SIZEY + 2; j++)
             clearEntity(&matrix[i][j]);
+}
+
+void destroyMatrix(Entity **matrix)
+{
+    for (int i = 0; i < SIZEX + 2; i++)
+        free(matrix[i]);
+
+    free(matrix);
 }

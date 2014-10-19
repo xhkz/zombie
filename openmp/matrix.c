@@ -10,7 +10,7 @@
 
 Entity **createMatrix(int size_x, int size_y)
 {
-    Entity **matrix = (Entity **) malloc(size_x * sizeof(Entity));
+    Entity **matrix = (Entity **) malloc(size_x * sizeof(Entity *));
 
     for (int i = 0; i < size_x; i++)
     {
