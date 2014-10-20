@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef _OPENMP
+
 #include <omp.h>
-#endif
 
 #include "entity.h"
 #include "constants.h"
@@ -93,13 +92,13 @@ void process(Entity **matrix_a, Entity **matrix_b, int i, int j)
 
 void moveBackInBorder(Entity **matrix)
 {
-    for (int i = 1; i <= SIZEX; i++)
+    for (int i = 0; i < SIZEX + 2; i++)
     {
         moveEntity(&matrix[i][0], &matrix[i][1]);
         moveEntity(&matrix[i][SIZEY+1], &matrix[i][SIZEY]);
     }
 
-    for (int i = 1; i <= SIZEY; i++)
+    for (int i = 0; i < SIZEY + 2; i++)
     {
         moveEntity(&matrix[0][i], &matrix[1][i]);
         moveEntity(&matrix[SIZEX+1][i], &matrix[SIZEX][i]);

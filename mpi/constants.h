@@ -65,6 +65,12 @@ typedef struct
 
 extern Counter counter;
 
+/* mpi */
+#define ROOT    0
+#define NORTH   0
+#define SOUTH   1
+#define TAG     55
+
 #endif // CONSTANTS_H_INCLUDED
 
 /*

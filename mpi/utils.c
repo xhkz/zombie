@@ -1,7 +1,6 @@
 #include <stdio.h>
-#ifdef _OPENMP
+#include <stdlib.h>
 #include <omp.h>
-#endif
 
 #include "utils.h"
 #include "constants.h"
@@ -9,7 +8,7 @@
 
 Counter counter;
 
-void updateCounter(Entity **matrix)
+void updateCounter(Entity **matrix_a, Entity **matrix_b)
 {
     unsigned long male = 0,
                   female = 0,
@@ -18,28 +17,48 @@ void updateCounter(Entity **matrix)
                   adult = 0,
                   elder = 0,
                   zombie = 0;
-#ifdef _OPENMP
+
     #pragma omp parallel for default(shared) reduction(+:male,female,baby,young,adult,elder,zombie)
-#endif
-    for (int i = 1; i <= SIZEY; i++)
+    for (int i = 0; i < SIZEX + 2; i++)
     {
-        for (int j = 1; j <= SIZEX; j++)
+        #pragma omp parallel for
+        for (int j = 0; j < SIZEY + 2; j++)
         {
-            switch(matrix[i][j].type)
+            #pragma omp parallel
             {
-            case HUMAN:
-                if (matrix[i][j].gender == MALE) male++;
-                if (matrix[i][j].gender == FEMALE) female++;
-                if (matrix[i][j].stage == BABY) baby++;
-                if (matrix[i][j].stage == YOUNG) young++;
-                if (matrix[i][j].stage == ADULT) adult++;
-                if (matrix[i][j].stage == ELDER) elder++;
-                break;
-            case ZOMBIE:
-                zombie++;
-                break;
-            default:
-                ;
+                switch(matrix_a[i][j].type)
+                {
+                case HUMAN:
+                    if (matrix_a[i][j].gender == MALE) male++;
+                    if (matrix_a[i][j].gender == FEMALE) female++;
+                    if (matrix_a[i][j].stage == BABY) baby++;
+                    if (matrix_a[i][j].stage == YOUNG) young++;
+                    if (matrix_a[i][j].stage == ADULT) adult++;
+                    if (matrix_a[i][j].stage == ELDER) elder++;
+                    break;
+                case ZOMBIE:
+                    zombie++;
+                    break;
+                default:
+                    ;
+                }
+
+                switch(matrix_b[i][j].type)
+                {
+                case HUMAN:
+                    if (matrix_b[i][j].gender == MALE) male++;
+                    if (matrix_b[i][j].gender == FEMALE) female++;
+                    if (matrix_b[i][j].stage == BABY) baby++;
+                    if (matrix_b[i][j].stage == YOUNG) young++;
+                    if (matrix_b[i][j].stage == ADULT) adult++;
+                    if (matrix_b[i][j].stage == ELDER) elder++;
+                    break;
+                case ZOMBIE:
+                    zombie++;
+                    break;
+                default:
+                    ;
+                }
             }
         }
     }
@@ -53,6 +72,17 @@ void updateCounter(Entity **matrix)
     counter.zombie = zombie;
 }
 
+void mergeCounter(Counter counterBuffer)
+{
+    counter.male += counterBuffer.male;
+    counter.female += counterBuffer.female;
+    counter.baby += counterBuffer.baby;
+    counter.young += counterBuffer.young;
+    counter.adult += counterBuffer.adult;
+    counter.elder += counterBuffer.elder;
+    counter.zombie += counterBuffer.zombie;
+}
+
 void printPopulation(int step)
 {
     printf("%d, male:%lu, female:%lu, baby:%lu, young:%lu, adult:%lu, elder:%lu, zombie:%lu, population:%lu\n",
@@ -60,18 +90,32 @@ void printPopulation(int step)
            (counter.male + counter.female + counter.zombie));
 }
 
-void printMatrix(Entity **matrix, int t)
+/* DEBUG USE */
+void printMatrix(Entity **matrix, int tag)
 {
-    for (int i = 1; i <= SIZEY; i++)
-    {
-        for (int j = 1; j <= SIZEX; j++)
-        {
-            char cell = ' ';
+    char * msg = (char *) malloc(((SIZEX + 2)*(SIZEY + 2) + SIZEY + 3)*sizeof(char));
+    char * msg_end = msg;
 
-            switch(matrix[i][j].type)
+    for (int y = 0; y < SIZEY + 2; y++)
+    {
+        for (int x = 0; x < SIZEX + 2; x++)
+        {
+            char cell = '.';
+
+            switch(matrix[x][y].type)
             {
             case HUMAN:
-                cell = 'h';
+                switch(matrix[x][y].gender)
+                {
+                case FEMALE:
+                    cell = 'f';
+                    break;
+                case MALE:
+                    cell = 'm';
+                    break;
+                default:
+                    ;
+                }
                 break;
             case ZOMBIE:
                 cell = 'z';
@@ -80,10 +124,15 @@ void printMatrix(Entity **matrix, int t)
                 ;
             }
 
-            printf("%c|", cell);
+            msg_end += sprintf(msg_end, "%c", cell);
         }
-        printf("\n");
+        msg_end += sprintf(msg_end, "\n");
     }
+
+    char tagM = (tag == 0 ? 'N' : 'S');
+
+    printf("--tag: %c--\n%s\n", tagM, msg);
+    free(msg);
 }
 
 void printHeader(void)
@@ -96,4 +145,31 @@ void printCSV(int step)
     printf("%d,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu\n",
            step, counter.male, counter.female, counter.baby, counter.young, counter.adult, counter.elder, counter.zombie,
            (counter.male + counter.female + counter.zombie));
+}
+
+void lock(int i, bool *locks)
+{
+    for (bool locked = false; locked == false; /*NOP*/)
+    {
+        #pragma omp critical (LockRegion)
+        {
+            locked = !locks[i-1] && !locks[i] && !locks[i+1];
+            if (locked)
+            {
+                locks[i-1] = true;
+                locks[i] = true;
+                locks[i+1] = true;
+            }
+        }
+    }
+}
+
+void unlock(int i, bool *locks)
+{
+    #pragma omp critical (LockRegion)
+    {
+        locks[i-1] = false;
+        locks[i] = false;
+        locks[i+1] = false;
+    }
 }
