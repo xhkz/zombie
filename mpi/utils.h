@@ -4,7 +4,7 @@
 #include "constants.h"
 #include "entity.h"
 
-void updateCounter(Entity **matrix_a, Entity **matrix_b);
+void updateCounter(Entity **matrix);
 void mergeCounter(Counter counterBuffer);
 void printPopulation(int t);
 void printMatrix(Entity **matrix, int tag);

@@ -8,7 +8,7 @@
 
 Counter counter;
 
-void updateCounter(Entity **matrix_a, Entity **matrix_b)
+void updateCounter(Entity **matrix)
 {
     unsigned long male = 0,
                   female = 0,
@@ -26,32 +26,15 @@ void updateCounter(Entity **matrix_a, Entity **matrix_b)
         {
             #pragma omp parallel
             {
-                switch(matrix_a[i][j].type)
+                switch(matrix[i][j].type)
                 {
                 case HUMAN:
-                    if (matrix_a[i][j].gender == MALE) male++;
-                    if (matrix_a[i][j].gender == FEMALE) female++;
-                    if (matrix_a[i][j].stage == BABY) baby++;
-                    if (matrix_a[i][j].stage == YOUNG) young++;
-                    if (matrix_a[i][j].stage == ADULT) adult++;
-                    if (matrix_a[i][j].stage == ELDER) elder++;
-                    break;
-                case ZOMBIE:
-                    zombie++;
-                    break;
-                default:
-                    ;
-                }
-
-                switch(matrix_b[i][j].type)
-                {
-                case HUMAN:
-                    if (matrix_b[i][j].gender == MALE) male++;
-                    if (matrix_b[i][j].gender == FEMALE) female++;
-                    if (matrix_b[i][j].stage == BABY) baby++;
-                    if (matrix_b[i][j].stage == YOUNG) young++;
-                    if (matrix_b[i][j].stage == ADULT) adult++;
-                    if (matrix_b[i][j].stage == ELDER) elder++;
+                    if (matrix[i][j].gender == MALE) male++;
+                    if (matrix[i][j].gender == FEMALE) female++;
+                    if (matrix[i][j].stage == BABY) baby++;
+                    if (matrix[i][j].stage == YOUNG) young++;
+                    if (matrix[i][j].stage == ADULT) adult++;
+                    if (matrix[i][j].stage == ELDER) elder++;
                     break;
                 case ZOMBIE:
                     zombie++;

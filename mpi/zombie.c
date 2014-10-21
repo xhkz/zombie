@@ -46,7 +46,8 @@ int main(int argc, char **argv)
     Entity * southBuffer = (Entity *) malloc((SIZEX + 2) * sizeof(Entity));
     Counter counterBuffer;
 
-    updateCounter(matrix_a, matrix_b);
+    updateCounter(matrix_a);
+    
     if (rank == NORTH)
     {
         MPI_Recv(&counterBuffer, 1, counter_t, SOUTH, TAG, MPI_COMM_WORLD, &status);
@@ -162,11 +163,12 @@ int main(int argc, char **argv)
             clearEntity(&matrix_a[i][rank == NORTH ? SIZEY + 1 : 0]);
 
         //some times it can not move back, then stay in the border
-        updateCounter(matrix_a, matrix_b);
+        transferInBorder(matrix_a, matrix_b);
         moveBackInBorder(matrix_b);
         Entity **matrix_t = matrix_a;
         matrix_a = matrix_b;
         matrix_b = matrix_t;
+        updateCounter(matrix_a);
 
         if (rank == NORTH)
         {
