@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     Counter counterBuffer;
 
     updateCounter(matrix_a);
-    
+
     if (rank == NORTH)
     {
         MPI_Recv(&counterBuffer, 1, counter_t, SOUTH, TAG, MPI_COMM_WORLD, &status);

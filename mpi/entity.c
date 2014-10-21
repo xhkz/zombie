@@ -9,12 +9,12 @@
 bool randomDeath(Entity * p)
 {
     double rnd = drandom();
-    double zombieDeathRate = DEATH_RATE_ZOMBIE;
 
-    if (counter.zombie < ZOMBIE_DIE_HARD) zombieDeathRate = 0.0;
+    if (p->type == ZOMBIE && counter.zombie <= ZOMBIE_DIE_HARD)
+        return false;
 
     return (p->type == HUMAN && rnd < DEATH_RATE_HUMAN) ||
-           (p->type == ZOMBIE && rnd < zombieDeathRate);
+           (p->type == ZOMBIE && rnd < DEATH_RATE_ZOMBIE);
 }
 
 bool pairBirth(Entity * p, Entity * neighbor, Entity * child)
@@ -78,7 +78,7 @@ void randomWalk(Entity * cell_a, Entity ** cell_b, Entity **matrix_a, Entity **m
         double move = drandom();
         double moveChance = cell_a->moveChance;
 
-        if (move < 1.0*moveChance && matrix_a[i-1][j].type == EMPTY && matrix_b[i-1][j].type == EMPTY)
+        if (move < 1.025*moveChance && matrix_a[i-1][j].type == EMPTY && matrix_b[i-1][j].type == EMPTY)
         {
             * cell_b = &matrix_b[i-1][j];
         }

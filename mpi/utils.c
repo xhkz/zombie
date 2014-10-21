@@ -24,25 +24,27 @@ void updateCounter(Entity **matrix)
         #pragma omp parallel for
         for (int j = 0; j < SIZEY + 2; j++)
         {
-            #pragma omp parallel
+
+            switch(matrix[i][j].type)
             {
-                switch(matrix[i][j].type)
+            case HUMAN:
+                #pragma omp parallel
                 {
-                case HUMAN:
                     if (matrix[i][j].gender == MALE) male++;
                     if (matrix[i][j].gender == FEMALE) female++;
                     if (matrix[i][j].stage == BABY) baby++;
                     if (matrix[i][j].stage == YOUNG) young++;
                     if (matrix[i][j].stage == ADULT) adult++;
                     if (matrix[i][j].stage == ELDER) elder++;
-                    break;
-                case ZOMBIE:
-                    zombie++;
-                    break;
-                default:
-                    ;
                 }
+                break;
+            case ZOMBIE:
+                zombie++;
+                break;
+            default:
+                ;
             }
+
         }
     }
 
