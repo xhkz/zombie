@@ -49,18 +49,27 @@ int main(int argc, char **argv)
     initRandom(0);
 
     bool debug = false;
+    int threadsLimit = 0;
 
     int c;
-    while ((c = getopt (argc, argv, "d")) != -1)
+    while ((c = getopt (argc, argv, "dn:")) != -1)
     {
         switch (c)
         {
         case 'd':
             debug = true;
             break;
+        case 'n':
+            threadsLimit = atoi(optarg);
+            break;
         default:
             ;
         }
+    }
+    
+    if (threadsLimit) {
+        omp_set_dynamic(0);
+        omp_set_num_threads(threadsLimit);
     }
 
     bool *locks = (bool *)malloc((SIZEX + 2) * sizeof(bool));
@@ -74,8 +83,6 @@ int main(int argc, char **argv)
     initMatrix(matrix_a, SIZEX, SIZEY);
 
     update_counter(matrix_a);
-    //print_population(0);
-    
     print_header();
     print_csv(0);
 
@@ -110,8 +117,6 @@ int main(int argc, char **argv)
 
         update_counter(matrix_a);
         print_csv(n+1);
-        //print_population(n+1);
-        //print_matrix(matrix_a, n+1);
     }
 
     destroyMatrix(matrix_a);

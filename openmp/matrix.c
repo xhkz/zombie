@@ -52,7 +52,6 @@ void initMatrix(Entity ** matrix, int size_x, int size_y)
         }
     }
 
-
     while(zombieCount < INIT_ZOMBIE_NUM)
     {
         posX = randomPos(SIZEX);
