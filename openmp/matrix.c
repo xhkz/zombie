@@ -89,15 +89,30 @@ void process(Entity **matrix_a, Entity **matrix_b, int i, int j)
     }
 }
 
+void transferInBorder(Entity **matrix_a, Entity **matrix_b)
+{
+    for (int i = 0; i < SIZEX + 2; i++)
+    {
+        moveEntity(&matrix_a[i][0], &matrix_b[i][0]);
+        moveEntity(&matrix_a[i][SIZEY+1], &matrix_b[i][SIZEY+1]);
+    }
+
+    for (int i = 1; i < SIZEY + 1; i++)
+    {
+        moveEntity(&matrix_a[0][i], &matrix_b[0][i]);
+        moveEntity(&matrix_a[SIZEX+1][i], &matrix_b[SIZEX+1][i]);
+    }
+}
+
 void moveBackInBorder(Entity **matrix)
 {
-    for (int i = 1; i <= SIZEX; i++)
+    for (int i = 0; i < SIZEX + 2; i++)
     {
         moveEntity(&matrix[i][0], &matrix[i][1]);
         moveEntity(&matrix[i][SIZEY+1], &matrix[i][SIZEY]);
     }
 
-    for (int i = 1; i <= SIZEY; i++)
+    for (int i = 0; i < SIZEY + 2; i++)
     {
         moveEntity(&matrix[0][i], &matrix[1][i]);
         moveEntity(&matrix[SIZEX+1][i], &matrix[SIZEX][i]);
@@ -109,4 +124,12 @@ void clearMatrix(Entity **matrix)
     for (int i = 0; i < SIZEX + 2; i++)
         for (int j = 0; j < SIZEY + 2; j++)
             clearEntity(&matrix[i][j]);
+}
+
+void destroyMatrix(Entity **matrix)
+{
+    for (int i = 0; i < SIZEX + 2; i++)
+        free(matrix[i]);
+
+    free(matrix);
 }

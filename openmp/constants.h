@@ -18,7 +18,13 @@
 #define AGE_ADULT_MAX       60
 #define AGE_ELDER_MAX       100
 
-// stage: bady(0-0.05) young(0.05-0.2) adult(0.2-0.8) elderly(0.8-1)
+/*
+ * stage:
+ *     bady    (0-0.05)
+ *     young   (0.05-0.2)
+ *     adult   (0.2-0.8)
+ *     elderly (0.8-1)
+*/
 #define INIT_BABY_RATE      0.05
 #define INIT_YOUNG_RATE     0.2
 #define INIT_ADULT_RATE     0.8

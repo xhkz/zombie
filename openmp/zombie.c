@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 #endif
             if (debug)
                 printf("step: %d, index_x: %d, thread_id: %d\n", n, i, omp_get_thread_num());
-
+            #pragma omp parallel for
             for (int j = 1; j <= SIZEY; j++)
             {
                 process(matrix_a, matrix_b, i, j);
@@ -100,6 +100,7 @@ int main(int argc, char **argv)
             unlock(i, locks);
 #endif
         }
+        transferInBorder(matrix_a, matrix_b);
         moveBackInBorder(matrix_b);
 
         //swap matrix
@@ -112,6 +113,9 @@ int main(int argc, char **argv)
         //print_population(n+1);
         //print_matrix(matrix_a, n+1);
     }
+
+    destroyMatrix(matrix_a);
+    destroyMatrix(matrix_b);
 
     return 0;
 }

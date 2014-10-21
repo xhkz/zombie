@@ -21,25 +21,29 @@ void update_counter(Entity **matrix)
 #ifdef _OPENMP
     #pragma omp parallel for default(shared) reduction(+:male,female,baby,young,adult,elder,zombie)
 #endif
-    for (int i = 1; i <= SIZEY; i++)
+    for (int i = 0; i < SIZEX + 2; i++)
     {
-        for (int j = 1; j <= SIZEX; j++)
+        #pragma omp parallel for
+        for (int j = 0; j < SIZEY + 2; j++)
         {
-            switch(matrix[i][j].type)
+            #pragma omp parallel
             {
-            case HUMAN:
-                if (matrix[i][j].gender == MALE) male++;
-                if (matrix[i][j].gender == FEMALE) female++;
-                if (matrix[i][j].stage == BABY) baby++;
-                if (matrix[i][j].stage == YOUNG) young++;
-                if (matrix[i][j].stage == ADULT) adult++;
-                if (matrix[i][j].stage == ELDER) elder++;
-                break;
-            case ZOMBIE:
-                zombie++;
-                break;
-            default:
-                ;
+                switch(matrix[i][j].type)
+                {
+                case HUMAN:
+                    if (matrix[i][j].gender == MALE) male++;
+                    if (matrix[i][j].gender == FEMALE) female++;
+                    if (matrix[i][j].stage == BABY) baby++;
+                    if (matrix[i][j].stage == YOUNG) young++;
+                    if (matrix[i][j].stage == ADULT) adult++;
+                    if (matrix[i][j].stage == ELDER) elder++;
+                    break;
+                case ZOMBIE:
+                    zombie++;
+                    break;
+                default:
+                    ;
+                }
             }
         }
     }
