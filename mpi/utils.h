@@ -8,8 +8,8 @@ void updateCounter(Entity **matrix);
 void mergeCounter(Counter counterBuffer);
 void printPopulation(int t);
 void printMatrix(Entity **matrix, int tag);
-void printHeader(void);
-void printCSV(int step);
+void printHeader(int rank);
+void printCSV(int step, int rank);
 void lock(int i, bool *locks);
 void unlock(int i, bool *locks);
 

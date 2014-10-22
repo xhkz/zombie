@@ -13,14 +13,83 @@
 #include "matrix.h"
 #include "random.h"
 
+
+/* Type and Buffer */
+int rank, size;
+MPI_Datatype cell_t;
+MPI_Datatype row_t;
+MPI_Datatype counter_t;
+MPI_Status   status;
+Counter counterBuffer;
+
+void syncCounter()
+{
+    if (rank == ROOT)
+    {
+        MPI_Recv(&counterBuffer, 1, counter_t, SOUTH, TAG, MPI_COMM_WORLD, &status);
+        mergeCounter(counterBuffer);
+    }
+    else
+    {
+        MPI_Send(&counter, 1, counter_t, NORTH, TAG, MPI_COMM_WORLD);
+    }
+}
+
+void setBorder(Entity * buffer, Entity ** matrix, int y)
+{
+    #pragma omp parallel for
+    for (int i = 0; i < SIZEX + 2; i++)
+        copyEntity(&buffer[i], &matrix[i][y]);
+}
+
+void setBuffer(Entity ** matrix, Entity * buffer, int y)
+{
+    #pragma omp parallel for
+    for (int i = 0; i < SIZEX + 2; i++)
+        copyEntity(&matrix[i][y] , &buffer[i]);
+}
+
+void mergeGhost(Entity * buffer, Entity ** matrix, int y)
+{
+    int i = 0, j = 0;
+    while (i < SIZEX + 2)
+    {
+        if (buffer[i].type != EMPTY)
+        {
+            for (j = i; j < SIZEX + 2; j++)
+            {
+                if (matrix[j][y].type == EMPTY)
+                {
+                    copyEntity(&buffer[i], &matrix[j][y]);
+                    // printf("{%d} merged [%d] to [%d]\n", rank, i, j);
+                    break;
+                }
+            }
+
+            // no space from i to right end
+            if (j == SIZEX + 2)
+                break;
+        }
+        i++;
+    }
+}
+
+void setGhost(Entity ** matrix, Entity * buffer, int y)
+{
+    #pragma omp parallel for
+    for (int i = 0; i < SIZEX + 2; i++)
+    {
+        copyEntity(&matrix[i][y], &buffer[i]);
+        clearEntity(&matrix[i][y]);
+    }
+}
+
 int main(int argc, char **argv)
 {
     bool *locks = (bool *)malloc((SIZEX + 2) * sizeof(bool));
     for (int i = 0; i < SIZEX + 2; i++)
         locks[i] = false;
 
-    int rank, size;
-    MPI_Status status;
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -30,36 +99,22 @@ int main(int argc, char **argv)
     Entity **matrix_b = createMatrix(SIZEX + 2, SIZEY + 2);
     initMatrix(matrix_a, SIZEX, SIZEY);
 
-    MPI_Datatype cell_t;
     MPI_Type_contiguous(sizeof(Entity), MPI_BYTE, &cell_t);
     MPI_Type_commit(&cell_t);
-
-    MPI_Datatype row_t;
     MPI_Type_vector(SIZEX + 2, 1, 1, cell_t, &row_t);
     MPI_Type_commit(&row_t);
-
-    MPI_Datatype counter_t;
     MPI_Type_contiguous(sizeof(Counter), MPI_BYTE, &counter_t);
     MPI_Type_commit(&counter_t);
 
     Entity * northBuffer = (Entity *) malloc((SIZEX + 2) * sizeof(Entity));
     Entity * southBuffer = (Entity *) malloc((SIZEX + 2) * sizeof(Entity));
-    Counter counterBuffer;
 
+    // update local counter and sync
     updateCounter(matrix_a);
+    syncCounter();
 
-    if (rank == NORTH)
-    {
-        MPI_Recv(&counterBuffer, 1, counter_t, SOUTH, TAG, MPI_COMM_WORLD, &status);
-        mergeCounter(counterBuffer);
-    }
-    else
-        MPI_Send(&counter, 1, counter_t, NORTH, TAG, MPI_COMM_WORLD);
-
-    if (rank == NORTH) {
-        printHeader();
-        printCSV(0);
-    }
+    printHeader(rank);
+    printCSV(0, rank);
 
     for (int n = 0; n < STEPS; n++)
     {
@@ -67,27 +122,19 @@ int main(int argc, char **argv)
         if (rank == NORTH)
         {
             MPI_Recv(northBuffer, 1, row_t, SOUTH, TAG, MPI_COMM_WORLD, &status);
-            #pragma omp parallel for
-            for (int i = 0; i < SIZEX + 2; i++)
-                copyEntity(&northBuffer[i], &matrix_a[i][SIZEY+1]);
+            setBorder(northBuffer, matrix_a, SIZEY+1);
 
-            #pragma omp parallel for
-            for (int i = 0; i < SIZEX + 2; i++)
-                copyEntity(&matrix_a[i][SIZEY], &northBuffer[i]);
+            setBuffer(matrix_a, northBuffer, SIZEY);
             MPI_Send(northBuffer, 1, row_t, SOUTH, TAG, MPI_COMM_WORLD);
         }
 
         if (rank == SOUTH)
         {
-            #pragma omp parallel for
-            for (int i = 0; i < SIZEX + 2; i++)
-                copyEntity(&matrix_a[i][1], &southBuffer[i]);
+            setBuffer(matrix_a, southBuffer, 1);
             MPI_Send(southBuffer, 1, row_t, NORTH, TAG, MPI_COMM_WORLD);
 
             MPI_Recv(southBuffer, 1, row_t, NORTH, TAG, MPI_COMM_WORLD, &status);
-            #pragma omp parallel for
-            for (int i = 0; i < SIZEX + 2; i++)
-                copyEntity(&southBuffer[i], &matrix_a[i][0]);
+            setBorder(southBuffer, matrix_a, 0);
         }
 
         #pragma omp parallel for default(none) shared(matrix_a, matrix_b, n, locks) schedule(static, SIZEX/omp_get_max_threads())
@@ -105,57 +152,19 @@ int main(int argc, char **argv)
         if (rank == NORTH)
         {
             MPI_Recv(northBuffer, 1, row_t, SOUTH, TAG, MPI_COMM_WORLD, &status);
-            int i = 0, j = 0;
-            while (i < SIZEX + 2) {
-                if (northBuffer[i].type != EMPTY) {
-                    for (j = i; j < SIZEX + 2; j++) {
-                        if (matrix_b[j][SIZEY].type == EMPTY) {
-                            copyEntity(&northBuffer[i], &matrix_b[j][SIZEY]);
-                            // printf("merged S[%d] to N[%d]\n", i, j);
-                            break;
-                        }
-                    }
+            mergeGhost(northBuffer, matrix_b, SIZEY);
 
-                    if (j == SIZEX + 2)
-                        break;
-                }
-                i++;
-            }
-
-            #pragma omp parallel for
-            for (int i = 0; i < SIZEX + 2; i++) {
-                copyEntity(&matrix_b[i][SIZEY+1], &northBuffer[i]);
-                clearEntity(&matrix_b[i][SIZEY+1]);
-            }
+            setGhost(matrix_b, northBuffer, SIZEY+1);
             MPI_Send(northBuffer, 1, row_t, SOUTH, TAG, MPI_COMM_WORLD);
         }
 
         if (rank == SOUTH)
         {
-            #pragma omp parallel for
-            for (int i = 0; i < SIZEX + 2; i++) {
-                copyEntity(&matrix_b[i][0], &southBuffer[i]);
-                clearEntity(&matrix_b[i][0]);
-            }
+            setGhost(matrix_b, southBuffer, 0);
             MPI_Send(southBuffer, 1, row_t, NORTH, TAG, MPI_COMM_WORLD);
 
             MPI_Recv(southBuffer, 1, row_t, NORTH, TAG, MPI_COMM_WORLD, &status);
-            int i = 0, j = 0;
-            while (i < SIZEX + 2) {
-                if (southBuffer[i].type != EMPTY) {
-                    for (j = i; j < SIZEX + 2; j++) {
-                        if (matrix_b[j][1].type == EMPTY) {
-                            copyEntity(&southBuffer[i], &matrix_b[j][1]);
-                            // printf("merged N[%d] to S[%d]\n", i, j);
-                            break;
-                        }
-                    }
-
-                    if (j == SIZEX + 2)
-                        break;
-                }
-                i++;
-            }
+            mergeGhost(southBuffer, matrix_b, 1);
         }
 
         // clear original adjacent border in matrix_a
@@ -165,22 +174,16 @@ int main(int argc, char **argv)
         //some times it can not move back, then stay in the border
         transferInBorder(matrix_a, matrix_b);
         moveBackInBorder(matrix_b);
+
+        // swap matrixes
         Entity **matrix_t = matrix_a;
         matrix_a = matrix_b;
         matrix_b = matrix_t;
+
         updateCounter(matrix_a);
+        syncCounter();
 
-        if (rank == NORTH)
-        {
-            MPI_Recv(&counterBuffer, 1, counter_t, SOUTH, TAG, MPI_COMM_WORLD, &status);
-            mergeCounter(counterBuffer);
-        }
-        else
-            MPI_Send(&counter, 1, counter_t, NORTH, TAG, MPI_COMM_WORLD);
-
-        if (rank == NORTH) {
-            printCSV(n+1);
-        }
+        printCSV(n+1, rank);
     }
 
     destroyMatrix(matrix_a);

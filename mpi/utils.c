@@ -120,16 +120,19 @@ void printMatrix(Entity **matrix, int tag)
     free(msg);
 }
 
-void printHeader(void)
+void printHeader(int rank)
 {
-    printf("days,male,female,baby,young,adult,elder,zombie,population\n");
+    if (rank == ROOT)
+        printf("days,male,female,baby,young,adult,elder,zombie,population\n");
 }
 
-void printCSV(int step)
+void printCSV(int step, int rank)
 {
-    printf("%d,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu\n",
-           step, counter.male, counter.female, counter.baby, counter.young, counter.adult, counter.elder, counter.zombie,
-           (counter.male + counter.female + counter.zombie));
+    if (rank == ROOT)
+        printf("%d,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu\n",
+            step, counter.male, counter.female, counter.baby,
+            counter.young, counter.adult, counter.elder, counter.zombie,
+            (counter.male + counter.female + counter.zombie));
 }
 
 void lock(int i, bool *locks)
