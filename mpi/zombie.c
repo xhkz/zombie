@@ -137,11 +137,10 @@ int main(int argc, char **argv)
     Entity * northBuffer = (Entity *) malloc((SIZEX + 2) * sizeof(Entity));
     Entity * southBuffer = (Entity *) malloc((SIZEX + 2) * sizeof(Entity));
 
-    // update local counter and sync
-    updateCounter(matrix_a);
-    syncCounter();
-
     if (!useClock) {
+        // update local counter and sync
+        updateCounter(matrix_a);
+        syncCounter();
         printHeader(rank);
         printCSV(0, rank);
     }
@@ -210,10 +209,12 @@ int main(int argc, char **argv)
         matrix_a = matrix_b;
         matrix_b = matrix_t;
 
-        updateCounter(matrix_a);
-        syncCounter();
-
-        if (!useClock) printCSV(n+1, rank);
+        if (!useClock)
+        {
+            updateCounter(matrix_a);
+            syncCounter();
+            printCSV(n+1, rank);
+        }
     }
     
     if (useClock)
