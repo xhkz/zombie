@@ -50,9 +50,10 @@ int main(int argc, char **argv)
 
     bool debug = false;
     int threadsLimit = 0;
+    int useClock = false;
 
     int c;
-    while ((c = getopt (argc, argv, "dn:")) != -1)
+    while ((c = getopt (argc, argv, "dn:t")) != -1)
     {
         switch (c)
         {
@@ -61,6 +62,9 @@ int main(int argc, char **argv)
             break;
         case 'n':
             threadsLimit = atoi(optarg);
+            break;
+        case 't':
+            useClock = true;
             break;
         default:
             ;
@@ -71,6 +75,9 @@ int main(int argc, char **argv)
         omp_set_dynamic(0);
         omp_set_num_threads(threadsLimit);
     }
+    
+    clock_t start;
+    start = clock();
 
     bool *locks = (bool *)malloc((SIZEX + 2) * sizeof(bool));
 
@@ -83,8 +90,11 @@ int main(int argc, char **argv)
     initMatrix(matrix_a, SIZEX, SIZEY);
 
     update_counter(matrix_a);
-    print_header();
-    print_csv(0);
+
+    if (!useClock) {
+        print_header();
+        print_csv(0);
+    }
 
     for (int n = 0; n < STEPS; n++)
     {
@@ -116,8 +126,11 @@ int main(int argc, char **argv)
         matrix_b = matrix_t;
 
         update_counter(matrix_a);
-        print_csv(n+1);
+        if (!useClock) print_csv(n+1);
     }
+    
+    if (useClock)
+        printf("Thread: %d, Time: %f sec\n", omp_get_max_threads(), (double)(clock() - start) / CLOCKS_PER_SEC);
 
     destroyMatrix(matrix_a);
     destroyMatrix(matrix_b);

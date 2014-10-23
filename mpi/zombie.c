@@ -86,6 +86,34 @@ void setGhost(Entity ** matrix, Entity * buffer, int y)
 
 int main(int argc, char **argv)
 {
+
+    int threadsLimit = 0;
+    int useClock = false;
+
+    int c;
+    while ((c = getopt (argc, argv, "n:t")) != -1)
+    {
+        switch (c)
+        {
+        case 'n':
+            threadsLimit = atoi(optarg);
+            break;
+        case 't':
+            useClock = true;
+            break;
+        default:
+            ;
+        }
+    }
+    
+    if (threadsLimit) {
+        omp_set_dynamic(0);
+        omp_set_num_threads(threadsLimit);
+    }
+    
+    clock_t start;
+    start = clock();
+
     bool *locks = (bool *)malloc((SIZEX + 2) * sizeof(bool));
     for (int i = 0; i < SIZEX + 2; i++)
         locks[i] = false;
@@ -113,8 +141,10 @@ int main(int argc, char **argv)
     updateCounter(matrix_a);
     syncCounter();
 
-    printHeader(rank);
-    printCSV(0, rank);
+    if (!useClock) {
+        printHeader(rank);
+        printCSV(0, rank);
+    }
 
     for (int n = 0; n < STEPS; n++)
     {
@@ -183,11 +213,17 @@ int main(int argc, char **argv)
         updateCounter(matrix_a);
         syncCounter();
 
-        printCSV(n+1, rank);
+        if (!useClock) printCSV(n+1, rank);
     }
+    
+    if (useClock)
+        printf("Thread: %d, Time: %f sec\n", omp_get_max_threads(), (double)(clock() - start) / CLOCKS_PER_SEC);
 
     destroyMatrix(matrix_a);
     destroyMatrix(matrix_b);
+    
+    free(northBuffer);
+    free(southBuffer);
 
     MPI_Finalize();
 
