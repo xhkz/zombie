@@ -14,6 +14,8 @@
 #include "matrix.h"
 #include "random.h"
 
+int benchmark = false;
+
 #ifdef _OPENMP
 void lock(int i, bool *locks)
 {
@@ -50,7 +52,6 @@ int main(int argc, char **argv)
 
     bool debug = false;
     int threadsLimit = 0;
-    int useClock = false;
 
     int c;
     while ((c = getopt (argc, argv, "dn:t")) != -1)
@@ -64,7 +65,7 @@ int main(int argc, char **argv)
             threadsLimit = atoi(optarg);
             break;
         case 't':
-            useClock = true;
+            benchmark = true;
             break;
         default:
             ;
@@ -89,7 +90,7 @@ int main(int argc, char **argv)
 
     initMatrix(matrix_a, SIZEX, SIZEY);
 
-    if (!useClock) {
+    if (!benchmark) {
         update_counter(matrix_a);
         print_header();
         print_csv(0);
@@ -124,13 +125,13 @@ int main(int argc, char **argv)
         matrix_a = matrix_b;
         matrix_b = matrix_t;
 
-        if (!useClock) {
+        if (!benchmark) {
             update_counter(matrix_a);
             print_csv(n+1);
         }
     }
     
-    if (useClock)
+    if (benchmark)
         printf("Thread: %d, Time: %f sec\n", omp_get_max_threads(), (double)(clock() - start) / CLOCKS_PER_SEC);
 
     destroyMatrix(matrix_a);

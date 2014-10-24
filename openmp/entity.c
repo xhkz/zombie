@@ -10,7 +10,7 @@ bool randomDeath(Entity * p)
 {
     double rnd = drandom();
 
-    if (p->type == ZOMBIE && counter.zombie <= ZOMBIE_DIE_HARD)
+    if (!benchmark && p->type == ZOMBIE && counter.zombie <= ZOMBIE_DIE_HARD)
         return false;
 
     return (p->type == HUMAN && rnd < DEATH_RATE_HUMAN) ||
@@ -46,7 +46,7 @@ bool pairInfection(Entity * p, Entity * neighbor)
 {
     double rate = INFECTION_RATE;
 
-    if (counter.zombie < ZOMBIE_DIE_HARD) rate = 1.0;
+    if (!benchmark && counter.zombie < ZOMBIE_DIE_HARD) rate = 1.0;
 
     if (p->type == HUMAN && neighbor->type == ZOMBIE && drandom() < rate)
     {

@@ -67,6 +67,7 @@ typedef struct
 } Counter;
 
 extern Counter counter;
+extern int benchmark;
 
 #endif // CONSTANTS_H_INCLUDED
 

@@ -1,6 +1,8 @@
 ﻿#ifndef CONSTANTS_H_INCLUDED
 #define CONSTANTS_H_INCLUDED
 
+#include <stdbool.h>
+
 #define STEPS   YEAR*10
 #define SIZEX   1024
 #define SIZEY   768
@@ -64,6 +66,7 @@ typedef struct
 } Counter;
 
 extern Counter counter;
+extern bool benchmark;
 
 /* mpi */
 #define ROOT    0

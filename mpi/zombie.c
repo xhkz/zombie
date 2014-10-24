@@ -22,6 +22,8 @@ MPI_Datatype counter_t;
 MPI_Status   status;
 Counter counterBuffer;
 
+bool benchmark = false;
+
 void syncCounter()
 {
     if (rank == ROOT)
@@ -88,7 +90,6 @@ int main(int argc, char **argv)
 {
 
     int threadsLimit = 0;
-    int useClock = false;
 
     int c;
     while ((c = getopt (argc, argv, "n:t")) != -1)
@@ -99,7 +100,7 @@ int main(int argc, char **argv)
             threadsLimit = atoi(optarg);
             break;
         case 't':
-            useClock = true;
+            benchmark = true;
             break;
         default:
             ;
@@ -137,7 +138,7 @@ int main(int argc, char **argv)
     Entity * northBuffer = (Entity *) malloc((SIZEX + 2) * sizeof(Entity));
     Entity * southBuffer = (Entity *) malloc((SIZEX + 2) * sizeof(Entity));
 
-    if (!useClock) {
+    if (!benchmark) {
         // update local counter and sync
         updateCounter(matrix_a);
         syncCounter();
@@ -209,7 +210,7 @@ int main(int argc, char **argv)
         matrix_a = matrix_b;
         matrix_b = matrix_t;
 
-        if (!useClock)
+        if (!benchmark)
         {
             updateCounter(matrix_a);
             syncCounter();
@@ -217,7 +218,7 @@ int main(int argc, char **argv)
         }
     }
     
-    if (useClock)
+    if (benchmark)
         printf("Thread: %d, Time: %f sec\n", omp_get_max_threads(), (double)(clock() - start) / CLOCKS_PER_SEC);
 
     destroyMatrix(matrix_a);
